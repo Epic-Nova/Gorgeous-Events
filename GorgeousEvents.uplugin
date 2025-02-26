@@ -1,0 +1,37 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "GT-E-0.1-FracturedHorizons",
+	"FriendlyName": "GorgeousEvents",
+	"Description": "Gorgeous Events plugin that provides various events interaction types that thigtly integrates with the core and other gorgeous plugins.",
+	"Category": "Universal",
+	"CreatedBy": "Simsalabim Studios",
+	"CreatedByURL": "https://simsalabim.studio",
+	"DocsURL": "https://docs.gt.simsalabim.studio",
+	"MarketplaceURL": "",
+	"SupportURL": "https://support.simsalabim.studio",
+	"EngineVersion": "ANY_VERSION",
+	"EnabledByDefault": false,
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "GorgeousEventsRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GorgeousEventsEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "GorgeousCore",
+			"Enabled": true
+		}
+	]
+}
