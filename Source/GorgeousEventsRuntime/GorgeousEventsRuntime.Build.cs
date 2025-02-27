@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 using System.IO;
 using UnrealBuildTool;
@@ -31,5 +31,7 @@ public class GorgeousEventsRuntime : ModuleRules
         });
         
         PublicDependencyModuleNames.AddRange(new[] { "GorgeousCoreRuntime", "GorgeousCoreRuntimeUtilities", "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "Projects" });
+        
+        PrivateDependencyModuleNames.Add("GorgeousCoreRuntime");
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
+﻿// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
 /*==========================================================================>
 |              Gorgeous Events - Events functionality provider              |
 | ------------------------------------------------------------------------- |
@@ -10,4 +10,13 @@
 <==========================================================================*/
 #pragma once
 
-DECLARE_LOG_CATEGORY_EXTERN(GorgeousEventsRuntime, Log, All);
+#include "GorgeousEventsRuntimeMinimal.h"
+#include "GorgeousEventVoidingContext.generated.h"
+
+UCLASS()
+class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingContext : public UObject
+{
+	GENERATED_BODY()
+
+public:
+};

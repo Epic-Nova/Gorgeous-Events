@@ -11,21 +11,18 @@
 #pragma once
 
 #include "GorgeousEventsRuntimeMinimal.h"
-#include "GorgeousEventLockingInterface.generated.h"
+#include "GorgeousUniqueClassspaceExecutionVoidingContext.generated.h"
 
+/**
+ * Void the event with UGorgeousUniqueClassspaceExecutionVoidingContext as the reason for why this event got voided.
+ * the context then should periodically check if the condition is not there anymore, when no dependencies exist anymore then we can safely delete this event with UnregisterEvent
+ *
+ * We do this because we don't want to lose the parent chain of the child, as the classspace execution system allowes specific events to share variables and context information as they were one single class, but they are still seperated
+ */
 UCLASS()
-class GORGEOUSEVENTSRUNTIME_API UGorgeousEventLockingInterface : public UGorgeousEventInterface
+class GORGEOUSEVENTSRUNTIME_API UGorgeousUniqueClassspaceExecutionVoidingContext : public UObject
 {
 	GENERATED_BODY()
 
 public:
-
-	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Locking")
-	virtual bool LockEvent(UGorgeousEvent* EventToLock);
-
-	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Locking")
-	virtual bool UnlockEvent(UGorgeousEvent* EventToUnlock);
-
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Locking")
-	virtual bool IsEventLocked(UGorgeousEvent* EventToCheck);
 };

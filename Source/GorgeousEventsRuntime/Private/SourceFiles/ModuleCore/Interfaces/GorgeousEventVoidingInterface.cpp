@@ -6,11 +6,20 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "Interfaces/GorgeousEventVoidingInterface.h"
 
-void UGorgeousEventVoidingInterface::VoidEvent(UGorgeousEvent* EventToVoid)
+#include "GorgeousEvents_GIS.h"
+
+UGorgeousEventVoidingInterface* UGorgeousEventVoidingInterface::GetEventVoidingInterface()
+{
+	//@TODO: Probably problematic for Dedicated server scenarios
+	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
+	return Cast<UGorgeousEventVoidingInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+}
+
+void UGorgeousEventVoidingInterface::VoidEvent(UGorgeousEvent* EventToVoid, TSubclassOf<UGorgeousEventVoidingContext> VoidingContext)
 {
 }
 

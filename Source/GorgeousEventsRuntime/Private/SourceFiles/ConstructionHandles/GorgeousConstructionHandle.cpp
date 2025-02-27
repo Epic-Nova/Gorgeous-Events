@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "ConstructionHandles/GorgeousConstructionHandle.h"
 
@@ -45,7 +45,7 @@ void UGorgeousConstructionHandle::OnConstructionStarted_Internal(UGorgeousEvent*
 
 void UGorgeousConstructionHandle::OnConstructionCleanup_Internal()
 {
-	MarkAsGarbage();
+
 }
 
 void UGorgeousConstructionHandle::OnConstructionQueued_Implementation()

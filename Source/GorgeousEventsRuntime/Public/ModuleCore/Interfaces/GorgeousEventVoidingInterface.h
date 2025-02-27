@@ -6,12 +6,14 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
 #include "GorgeousEventsRuntimeMinimal.h"
 #include "GorgeousEventVoidingInterface.generated.h"
+
+class UGorgeousEventVoidingContext;
 
 UCLASS()
 class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingInterface : public UGorgeousEventInterface
@@ -19,16 +21,19 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingInterface : public UGorgeou
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding", meta = (CompactNodeTitle = "Gorgeous Event Voiding"))
+	static UGorgeousEventVoidingInterface* GetEventVoidingInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Voiding")
-	void VoidEvent(UGorgeousEvent* EventToVoid);
+	virtual void VoidEvent(UGorgeousEvent* EventToVoid, TSubclassOf<UGorgeousEventVoidingContext> VoidingContext);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Voiding")
-	void UnvoidEvent(UGorgeousEvent* EventToUnvoid);
+	virtual void UnvoidEvent(UGorgeousEvent* EventToUnvoid);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding")
-	bool IsEventVoided(UGorgeousEvent* EventToCheck);
+	virtual bool IsEventVoided(UGorgeousEvent* EventToCheck);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding")
-	bool IsVoidable(UGorgeousEvent* EventToCheck);
+	virtual bool IsVoidable(UGorgeousEvent* EventToCheck);
 };

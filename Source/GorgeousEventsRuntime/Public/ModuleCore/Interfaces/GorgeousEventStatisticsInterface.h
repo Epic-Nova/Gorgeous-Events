@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -21,27 +21,30 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventStatisticsInterface : public UGorg
 
 public:
 
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Statistics", meta = (CompactNodeTitle = "Gorgeous Event Statistics"))
+	static UGorgeousEventStatisticsInterface* GetEventStatisticsInterface();
+	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void AddEventToStatistics(UGorgeousEvent* EventToAdd);
+	virtual void AddEventToStatistics(UGorgeousEvent* EventToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void RemoveEventFromStatistics(UGorgeousEvent* EventToRemove);
+	virtual void RemoveEventFromStatistics(UGorgeousEvent* EventToRemove);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Statistics")
-	bool IsEventInStatistics(UGorgeousEvent* EventToCheck);
+	virtual bool IsEventInStatistics(UGorgeousEvent* EventToCheck);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void GeatherCurrentEventHeapSnapshot();
+	virtual void GatherCurrentEventHeapSnapshot();
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void StartEventHeapSnapshot();
+	virtual void StartEventHeapSnapshot(UGorgeousEvent* Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void StopEventHeapSnapshot();
+	virtual void StopEventHeapSnapshot(UGorgeousEvent* Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void SaveEventHeapSnapshot();
+	virtual void SaveEventHeapSnapshot();
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")
-	void VisualizeEventHeapSnapshot();
+	virtual void VisualizeEventHeapSnapshot();
 };

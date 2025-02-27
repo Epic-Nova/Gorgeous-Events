@@ -6,14 +6,14 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "AsyncActions/GorgeousEventAsyncAction.h"
 
 void UGorgeousEventAsyncAction::Activate()
 {
 	FTimerHandle TimerHandle;
-	GWorld->GetTimerManager().SetTimer(TimerHandle, [this]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 	{
 		OnCompleted.Broadcast(EventName + TEXT(" Completed!"));
 	}, 2.0f, false);

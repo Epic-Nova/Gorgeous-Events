@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventManagingInterface.h"
@@ -17,6 +17,7 @@ UGorgeousEventConstructionInterface* UGorgeousEventConstructionInterface::Single
 
 UGorgeousEventConstructionInterface* UGorgeousEventConstructionInterface::GetEventConstructionInterface()
 {
+	//@TODO: Probably problematic for Dedicated server scenarios
 	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
 	return Cast<UGorgeousEventConstructionInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
@@ -134,21 +135,26 @@ UGorgeousConstructionHandle* UGorgeousEventConstructionInterface::GetConstructio
 	return nullptr;
 }
 
-bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove)
+bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove, bool bDeleteHandle)
 {
-	return RemoveConstructionHandleFromQueueByGuid(HandleToRemove->UniqueEventIdentifier);
+	return RemoveConstructionHandleFromQueueByGuid(HandleToRemove->UniqueEventIdentifier, bDeleteHandle);
 }
 
-bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueueByGuid(const FGuid EventGuid)
+bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueueByGuid(const FGuid EventGuid, bool bDeleteHandle)
 {
 	if (IsEventInConstructionQueue(EventGuid))
 	{
-		const UGorgeousConstructionHandle* Handle = GetConstructionHandleByGuid(EventGuid);
+		UGorgeousConstructionHandle* Handle = GetConstructionHandleByGuid(EventGuid);
 		ConstructionQueue.Remove(EventGuid);
 		
 		UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Removed construction handle for event: %s with unique identifier: %s from construction queue!"),
 			*Handle->EventClass->GetName(), *EventGuid.ToString()),
 			"GT.Events.Construction.Queue.RemovedHandle", 2.0f, false, true, this);
+
+		if (bDeleteHandle)
+		{
+			Handle->MarkAsGarbage();
+		}
 		
 		return true;
 	}
@@ -193,8 +199,7 @@ TArray<UGorgeousConstructionHandle*> UGorgeousEventConstructionInterface::Valida
 	}
 
 	bAllQueuedHandlesValid = NumInvalidEvents == 0;
-
-
+	
 	if (bApplyValidationToInstancedVariable)
 	{
 		ConstructionQueue = TempConstructionQueue;

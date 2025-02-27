@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -21,8 +21,8 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventActionQueueInterface : public UGor
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Action Queue")
-	void MoveEventToActionQueue(UGorgeousEvent* EventToMove);
+	virtual void MoveEventToActionQueue(UGorgeousEvent* EventToMove);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Action Queue")
-	void TryResolveEventState(UGorgeousEvent* EventToResolve);
+	virtual void TryResolveEventState(UGorgeousEvent* EventToResolve);
 };

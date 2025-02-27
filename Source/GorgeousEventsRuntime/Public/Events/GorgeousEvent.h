@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 
 //<=============================--- Pragmas ---==============================>
@@ -29,10 +29,10 @@ class AEventTrigger_A;
 //<=================--- Delegates ---=================>
 
 // The delegate for the state change of the event.
-DECLARE_DELEGATE_TwoParams(FGorgeousEventStateChanged, EGorgeousEventState_E, EGorgeousEventState_E);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FGorgeousEventStateChanged, EGorgeousEventState_E, EGorgeousEventState_E);
 
 // The delegate for the continuous processing loop
-DECLARE_MULTICAST_DELEGATE(FGorgeousEventContinuousProcessingLoop)
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FGorgeousEventContinuousProcessingLoop, EGorgeousEventState_E, float, int64);
 
 // The delegate for the event trigger.
 DECLARE_MULTICAST_DELEGATE(FGorgeousEventTriggered);
@@ -78,12 +78,11 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousEventCleanup);
 | tightly integrated by most of the Gorgeous Things plugins.
 <--------------------------------------------------------------------------->
 <---------------------------=== TODOs & Notes ===--------------------------->
-//@TODO: Runtime Event variables
 <--------------------------------------------------------------------------->
 <==========================================================================*/
 UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Event", Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient, Within = GorgeousConstructionHandle,
 	meta = (ToolTip = "The base class for all Gorgeous Events.", ShortTooltip = "Gorgeous Event", ExposedAsyncProxy = GorgeousEventAsyncAction))
-class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousBaseWorldContextUObject
+class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 {
 	GENERATED_BODY()
 
@@ -91,17 +90,18 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousBaseWorldContex
 	friend class UGorgeousEventManagingInterface;
 	//<------------------------------------------------------>
 	
-
-	
 	
 	//<============================--- Overrides ---============================>
 public:
 
-	// Sets up this event to be supported for networking.
-	virtual bool IsSupportedForNetworking() const override { return true; }
-
 	// Definition for variables that are replicated.
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// The equivalent to the OnConstruction function in the Unreal Engine.
+	virtual void PostInitProperties() override;
+	
+	// Used to change the values of properties to comply with the edit condition meta tags
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 protected:
 
@@ -159,6 +159,12 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "Continuous Event Processing Loop", Category = "Gorgeous Events|Event Callbacks")
 	void ContinuousEventProcessingLoop(EGorgeousEventState_E CurrentLoopState, float DeltaTime, int64 CurrentProcessingLoopCount);
+
+	/**
+	 * @brief Called when this event state changes.
+	 */
+	UFUNCTION(BlueprintNativeEvent, DisplayName = "On State Changed", Category = "Gorgeous Events|Event Callbacks")
+	void OnEventStateChanged(EGorgeousEventState_E OldEventState, EGorgeousEventState_E NewEventState);
 	
 	/**
 	 * @brief Called when this event is triggered. This function is used to start the event.
@@ -269,8 +275,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events", DisplayName = "Seconds to Wait (on Triggered to Started state)")
 	float SecondsToWait;
 	
-	//The timeout in seconds for the ongoing state of the event.
-	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events", DisplayName = "Event Timeout (Ongoing State)")
+	//The timeout in seconds for the processing state of the event.
+	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events", DisplayName = "Event Timeout (Processing State)")
 	float EventTimeout;
 	
 	//The delay between the processing loop ticks.
@@ -300,11 +306,11 @@ private:
 
 	
 	//Only one Event Execution of childs are allowed that inherit from ClassspaceParent.
-	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace")
+	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace", meta = (EditCondition = "ClassspaceParent != nullptr", EditConditionHides))
 	bool bUniqueClassspaceExecution;
 
 	//The class that should be used for the classspace against check.
-	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace", meta = (EditCondition = "bUniqueClassspaceExecution", EditConditionHides))
+	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace")
 	TSubclassOf<UGorgeousEvent> ClassspaceParent;
 	//<------------------------------------------------------------------------->
 
@@ -322,6 +328,9 @@ protected:
 	 * @param CurrentProcessingLoopCount The current loop count.
 	 */
 	virtual void ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState, float DeltaTime, int64 CurrentProcessingLoopCount);
+
+	// The internal function that is called when the event state changes
+	virtual void OnEventStateChanged_Internal(EGorgeousEventState_E OldEventState, EGorgeousEventState_E NewEventState);
 	
 	// The internal function that is called when the event is triggered.
 	virtual void OnEventTriggered_Internal();
@@ -349,6 +358,12 @@ protected:
 	
 private:
 
+	// The internal function that is called when the event should switch to the ongoing state
+	void SwitchToStartedState_Internal();
+	
+	// The internal function that is called when the event should switch to the ongoing state
+	void SwitchToProcessingState_Internal();
+
 	//<------------------------------------------------------------------------->
 
 	
@@ -361,6 +376,9 @@ private:
 
 	//Weather the event execution is finished and nothing else is going to kick of anymore.
 	bool bIsEventFinished;
+
+	//The timer handle to the event timeout. Only valid if the event timeout variable is set.
+	FTimerHandle EventTimeoutTimerHandle;
 	
 	//<------------------------------------------------------------------------->
 };

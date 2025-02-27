@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -28,43 +28,34 @@ public:
 	static UGorgeousEventManagingInterface* GetEventManagingInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	void LoadEvent(TSoftClassPtr<UGorgeousEvent> EventToLoad, const FOnEventLoaded& OnEventLoaded);
+	virtual void LoadEvent(TSoftClassPtr<UGorgeousEvent> EventToLoad, const FOnEventLoaded& OnEventLoaded);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool RegisterEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent);
+	virtual bool RegisterEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool UnregisterEvent(UGorgeousEvent* EventToUnregister);
+	virtual bool UnregisterEvent(UGorgeousEvent* EventToUnregister);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool CancelEvent(UGorgeousEvent* EventToCancel);
+	virtual bool CancelEvent(UGorgeousEvent* EventToCancel);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool TriggerEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& TriggeredEvent);
+	virtual bool TriggerEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& TriggeredEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool CompleteEvent(UGorgeousEvent* EventToComplete);
+	virtual bool CompleteEvent(UGorgeousEvent* EventToComplete);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Managing")
-	bool IsEventOfClassRegistered(const TSubclassOf<UGorgeousEvent>& EventClassToCheck) const;
+	virtual bool IsEventOfClassRegistered(const TSubclassOf<UGorgeousEvent>& EventClassToCheck, bool bIncludeSubclassCheck = false) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool RemoveUnregisteredEvent(UGorgeousEvent* Event);
-	
-	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool RemoveUnregisteredEvents();
+	virtual bool RemoveUnregisteredEvent(UGorgeousEvent* Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool RemoveUnregisteredEventsOfClass(TSubclassOf<UGorgeousEvent> EventClassToRemove);
-
-	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	TArray<UGorgeousEvent*> GetRegisteredEvents() const;
+	virtual TArray<UGorgeousEvent*> GetRegisteredEvents() const;
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Managing")
-	bool IsEventRegistered(UGorgeousEvent* EventToCheck) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
-	bool ValidateRegisteredEvents(bool bShouldRemoveInvalidEvents, bool bApplyValidationToInstancedVariable, bool& bAllRegisteredEventsValid, int32& NumInvalidEvents);
+	virtual bool IsEventRegistered(UGorgeousEvent* EventToCheck) const;
 
 	virtual void LoadEventNative(TSoftClassPtr<UGorgeousEvent> EventToLoad, const FOnEventLoadedNative& OnEventLoaded);
 

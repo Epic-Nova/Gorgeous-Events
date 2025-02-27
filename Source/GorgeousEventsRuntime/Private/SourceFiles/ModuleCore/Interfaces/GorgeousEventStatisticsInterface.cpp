@@ -6,9 +6,18 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "Interfaces/GorgeousEventStatisticsInterface.h"
+
+#include "GorgeousEvents_GIS.h"
+
+UGorgeousEventStatisticsInterface* UGorgeousEventStatisticsInterface::GetEventStatisticsInterface()
+{
+	//@TODO: Probably problematic for Dedicated server scenarios
+	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
+	return Cast<UGorgeousEventStatisticsInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+}
 
 void UGorgeousEventStatisticsInterface::AddEventToStatistics(UGorgeousEvent* EventToAdd)
 {
@@ -23,15 +32,15 @@ bool UGorgeousEventStatisticsInterface::IsEventInStatistics(UGorgeousEvent* Even
 	return false;
 }
 
-void UGorgeousEventStatisticsInterface::GeatherCurrentEventHeapSnapshot()
+void UGorgeousEventStatisticsInterface::GatherCurrentEventHeapSnapshot()
 {
 }
 
-void UGorgeousEventStatisticsInterface::StartEventHeapSnapshot()
+void UGorgeousEventStatisticsInterface::StartEventHeapSnapshot(UGorgeousEvent* Event)
 {
 }
 
-void UGorgeousEventStatisticsInterface::StopEventHeapSnapshot()
+void UGorgeousEventStatisticsInterface::StopEventHeapSnapshot(UGorgeousEvent* Event)
 {
 }
 

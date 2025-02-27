@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -21,20 +21,20 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventFreezingInterface : public UGorgeo
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Freezing")
-	void FreezeEvent(UGorgeousEvent* EventToFreeze);
+	virtual void FreezeEvent(UGorgeousEvent* EventToFreeze);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Freezing")
-	void UnfreezeEvent(UGorgeousEvent* EventToUnfreeze);
+	virtual void UnfreezeEvent(UGorgeousEvent* EventToUnfreeze);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Freezing")
-	bool IsEventFrozen(UGorgeousEvent* EventToCheck);
+	virtual bool IsEventFrozen(UGorgeousEvent* EventToCheck);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Freezing")
-	void FreezeAllEvents(bool bFreezeNewEvents, bool bFreezeNestedEvents);
+	virtual void FreezeAllEvents(bool bFreezeNewEvents, bool bFreezeNestedEvents);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Freezing")
-	void UnfreezeAllEvents(bool bUnfreezeNewEvents, bool bUnfreezeNestedEvents);
+	virtual void UnfreezeAllEvents(bool bUnfreezeNewEvents, bool bUnfreezeNestedEvents);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Freezing")
-	bool AreAllEventsFrozen(bool bCheckNewEvents, bool bCheckNestedEvents);
+	virtual bool AreAllEventsFrozen(bool bCheckNewEvents, bool bCheckNestedEvents);
 };

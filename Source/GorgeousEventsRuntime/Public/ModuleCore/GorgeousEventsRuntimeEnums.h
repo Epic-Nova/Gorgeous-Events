@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -28,7 +28,7 @@ enum class EGorgeousEventState_E : uint8
 	Event_State_Finished = 5 UMETA(DisplayName = "Finished", ToolTip = "The event has been processed and is finished."),
 	Event_State_Canceled = 6 UMETA(DisplayName = "Canceled", ToolTip = "The event has been canceled and is not processed."),
 	Event_State_Voided = 7 UMETA(DisplayName = "Voided", ToolTip = "The event has been voided and is not processed."),
-	Event_State_Max = 8 UMETA(Hidden)
+	Event_State_MAX = 8 UMETA(Hidden)
 };
 
 UENUM(BlueprintType, DisplayName = "Trigger Type", meta = (ShortTooltip = "Under what condition should the event be triggered"))
@@ -37,5 +37,15 @@ enum class EGorgeousEventTriggerType_E : uint8
 	Event_Trigger_Manual = 0 UMETA(DisplayName = "Manual", ToolTip = "The event is triggered manually."),
 	Event_Trigger_WorldObjectOverlap = 1 UMETA(DisplayName = "World Object Overlap", ToolTip = "The event is triggered after an overlap with another object."),
 	Event_Trigger_AfterInteraction = 2 UMETA(DisplayName = "After Interaction", ToolTip = "The event is triggered ater an interaction."),
-	Event_Trigger_Max = 3 UMETA(Hidden)
+	Event_Trigger_MAX = 3 UMETA(Hidden)
+};
+
+UENUM(BlueprintType, DisplayName = "Skip Type", meta = (ShortTooltip = "Weather the event can be skipped or not"))
+enum class EGorgeousEventSkipType_E : uint8
+{
+	Event_Skip_Skippable = 0 UMETA(DisplayName = "Skippable", ToolTip = "The player can skip this event type at any given time. Optionally a handling function/callback can be bound to define the behaviour when doing so."),
+	Event_Skip_Partial_Skippable = 1 UMETA(DisplayName = "Partial Skippable", ToolTip = "The player can skip this event type partially. Mostly to the next section of the event or a custom defined one. Optionally a handling function/callback can be bound to define the behaviour when doing so."),
+	Event_Skip_Not_Skippable = 2 UMETA(DisplayName = "Not Skippable", ToolTip = "The player can't skip the event no matter what."),
+	Event_Skip_Cond_Skippable = 3 UMETA(DisplayName = "Conditional Skippable", ToolTip = "The player can skip the event under the default condition that it already has been played at some point in the corresponding save game. Alternatively a different condition to skip this event can be given."),
+	Event_Skip_MAX = 4 UMETA(Hidden)
 };

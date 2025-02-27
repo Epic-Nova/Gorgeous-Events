@@ -6,7 +6,7 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|      that is has nothing in common with Epic Games in any capacity.       |
+|         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #pragma once
 
@@ -27,34 +27,34 @@ public:
 	static UGorgeousEventConstructionInterface* GetEventConstructionInterface();
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction")
-	void QueueEventConstruction(TSoftClassPtr<UGorgeousEvent> EventToConstruct, FGuid UniqueEventIdentifierOverride, const FOnEventConstructionQueued& OnEventConstructionQueued);
+	virtual void QueueEventConstruction(TSoftClassPtr<UGorgeousEvent> EventToConstruct, FGuid UniqueEventIdentifierOverride, const FOnEventConstructionQueued& OnEventConstructionQueued);
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction")
-	bool CancelEventConstruction(UGorgeousConstructionHandle* ConstructionToCancel);
+	virtual bool CancelEventConstruction(UGorgeousConstructionHandle* ConstructionToCancel);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction")
-	bool CancelEventConstructionByGuid(FGuid EventGuid);
+	virtual bool CancelEventConstructionByGuid(FGuid EventGuid);
 	
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction|Queue")
-	TArray<UGorgeousConstructionHandle*> GetEventConstructionQueue();
+	virtual TArray<UGorgeousConstructionHandle*> GetEventConstructionQueue();
 	
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction|Queue")
-	bool IsEventInConstructionQueue(FGuid EventToCheck);
+	virtual bool IsEventInConstructionQueue(FGuid EventToCheck);
 	
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction|Queue")
-	UGorgeousConstructionHandle* GetConstructionHandle(const UGorgeousEvent* EventToGetHandleFor);
+	virtual UGorgeousConstructionHandle* GetConstructionHandle(const UGorgeousEvent* EventToGetHandleFor);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction|Queue")
-	UGorgeousConstructionHandle* GetConstructionHandleByGuid(FGuid EventGuid);
+	virtual UGorgeousConstructionHandle* GetConstructionHandleByGuid(FGuid EventGuid);
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction|Queue")
-	bool RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove);
+	virtual bool RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove, bool bDeleteHandle = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction|Queue")
-	bool RemoveConstructionHandleFromQueueByGuid(FGuid EventGuid);
+	virtual bool RemoveConstructionHandleFromQueueByGuid(FGuid EventGuid, bool bDeleteHandle = false);
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction|Queue")
-	TArray<UGorgeousConstructionHandle*> ValidateConstructionQueue(bool bShouldRemoveInvalidHandles, bool bApplyValidationToInstancedVariable, bool& bAllQueuedHandlesValid, int32& NumInvalidEvents);
+	virtual TArray<UGorgeousConstructionHandle*> ValidateConstructionQueue(bool bShouldRemoveInvalidHandles, bool bApplyValidationToInstancedVariable, bool& bAllQueuedHandlesValid, int32& NumInvalidEvents);
 	
 private:
 
