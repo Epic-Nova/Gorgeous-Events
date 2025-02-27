@@ -175,7 +175,14 @@ void UGorgeousEvent::OnEventTriggered_Internal()
 			if (!bPersist)
 			{
 				UGorgeousEventManagingInterface* EventManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
-				EventManagingInterface->CompleteEvent(this);
+				if (bDestroyImmediately)
+				{
+					EventManagingInterface->UnregisterEvent(this);
+				}
+				else
+				{
+					EventManagingInterface->CompleteEvent(this);
+				}
 			}
 		});
 	}
