@@ -11,6 +11,7 @@
 #pragma once
 
 #include "GorgeousEventsRuntimeMinimal.h"
+#include "GorgeousEventVoidingContext.h"
 #include "GorgeousUniqueClassspaceExecutionVoidingContext.generated.h"
 
 /**
@@ -20,9 +21,11 @@
  * We do this because we don't want to lose the parent chain of the child, as the classspace execution system allowes specific events to share variables and context information as they were one single class, but they are still seperated
  */
 UCLASS()
-class GORGEOUSEVENTSRUNTIME_API UGorgeousUniqueClassspaceExecutionVoidingContext : public UObject
+class GORGEOUSEVENTSRUNTIME_API UGorgeousUniqueClassspaceExecutionVoidingContext : public UGorgeousEventVoidingContext
 {
 	GENERATED_BODY()
 
 public:
+
+	virtual void CheckVoidingNeed() override;
 };

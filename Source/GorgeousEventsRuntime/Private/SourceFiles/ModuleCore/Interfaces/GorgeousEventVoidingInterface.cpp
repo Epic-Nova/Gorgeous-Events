@@ -9,8 +9,8 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "Interfaces/GorgeousEventVoidingInterface.h"
-
 #include "GorgeousEvents_GIS.h"
+#include "VoidingContexts/GorgeousEventVoidingContext.h"
 
 UGorgeousEventVoidingInterface* UGorgeousEventVoidingInterface::GetEventVoidingInterface()
 {
@@ -19,20 +19,58 @@ UGorgeousEventVoidingInterface* UGorgeousEventVoidingInterface::GetEventVoidingI
 	return Cast<UGorgeousEventVoidingInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
 
-void UGorgeousEventVoidingInterface::VoidEvent(UGorgeousEvent* EventToVoid, TSubclassOf<UGorgeousEventVoidingContext> VoidingContext)
+bool UGorgeousEventVoidingInterface::VoidEvent(UGorgeousEvent* EventToVoid, const TSubclassOf<UGorgeousEventVoidingContext> VoidingContext)
 {
+	if (VoidingContext && IsVoidable(EventToVoid))
+	{
+		UGorgeousEventVoidingContext* NewVoidingContext = NewObject<UGorgeousEventVoidingContext>(this, VoidingContext);
+		NewVoidingContext->VoidedEvent = EventToVoid;
+		
+		FTimerHandle VoidingTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(VoidingTimerHandle, [NewVoidingContext]()
+		{
+			NewVoidingContext->CheckVoidingNeed();
+		}, 5.f, true);
+
+		const TPair<TObjectPtr<UGorgeousEventVoidingContext>, FTimerHandle> Pair(NewVoidingContext, VoidingTimerHandle);
+		VoidedEvents.Add(EventToVoid, Pair);
+		return true;
+	}
+	return false;
 }
 
-void UGorgeousEventVoidingInterface::UnvoidEvent(UGorgeousEvent* EventToUnvoid)
+void UGorgeousEventVoidingInterface::UnvoidEvent(UGorgeousEvent* EventToUnvoid, const bool bRegisterAgain)
 {
+	if (VoidedEvents[EventToUnvoid].Key)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(VoidedEvents[EventToUnvoid].Value);
+		if (!bRegisterAgain)
+		{
+			UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(EventToUnvoid);
+			EventToUnvoid->GetOuterUGorgeousConstructionHandle()->MarkAsGarbage();
+		}
+		else
+		{
+			UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+			ManagingInterface->ReregisterEvent(EventToUnvoid);
+			
+			const EGorgeousEventState_E PreviousEventState = EventToUnvoid->EventState;
+			EventToUnvoid->EventState = EGorgeousEventState_E::Event_State_Processing;
+			EventToUnvoid->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToUnvoid->EventState);
+			EventToUnvoid->OnEventProcessingDelegate.Broadcast();
+		}
+		VoidedEvents[EventToUnvoid].Key->MarkAsGarbage();
+		VoidedEvents.Remove(EventToUnvoid);
+	}
 }
 
 bool UGorgeousEventVoidingInterface::IsEventVoided(UGorgeousEvent* EventToCheck)
 {
-	return false;
+	return VoidedEvents[EventToCheck].Key != nullptr;
 }
 
 bool UGorgeousEventVoidingInterface::IsVoidable(UGorgeousEvent* EventToCheck)
 {
-	return false;
+	const UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+	return ManagingInterface->IsEventRegistered(EventToCheck);
 }

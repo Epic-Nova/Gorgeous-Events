@@ -10,19 +10,17 @@
 <==========================================================================*/
 #pragma once
 
-#include "GorgeousEventsRuntimeMinimal.h"
-#include "GorgeousEventVoidingContext.generated.h"
+#include "VoidingContexts/GorgeousEventVoidingContext.h"
 
-UCLASS()
-class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingContext : public UObject
+#include "Interfaces/GorgeousEventVoidingInterface.h"
+
+void UGorgeousEventVoidingContext::CheckVoidingNeed()
 {
-	GENERATED_BODY()
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("Default implementation of CheckVoidingNeed called. Please override this!", "GT.Events.Voiding.Default_Implementation");
+}
 
-public:
-
-	virtual void CheckVoidingNeed();
-
-	void InvalidateVoiding(const bool bRegisterAgain) const;
-
-	TObjectPtr<UGorgeousEvent> VoidedEvent;
-};
+void UGorgeousEventVoidingContext::InvalidateVoiding(const bool bRegisterAgain) const
+{
+	UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
+	VoidingInterface->UnvoidEvent(VoidedEvent, bRegisterAgain);
+}

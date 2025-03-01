@@ -126,6 +126,35 @@ UGorgeousEvent::~UGorgeousEvent()
 {
 }
 
+UGorgeousEvent* UGorgeousEvent::GetClassspaceParent() const
+{
+	const UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+	for (TArray<UGorgeousEvent*> RegisteredEvents = ManagingInterface->GetRegisteredEvents(); UGorgeousEvent* Event : RegisteredEvents)
+	{
+		if (ManagingInterface->IsEventOfClassRegistered(ClassspaceParent, true))
+		{
+			return Event;
+		}
+	}
+	return nullptr;
+}
+
+TArray<UGorgeousEvent*> UGorgeousEvent::GetClassspaceChildren() const
+{
+	TArray<UGorgeousEvent*> Children;
+	const UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+
+	for (TArray<UGorgeousEvent*> RegisteredEvents = ManagingInterface->GetRegisteredEvents(); UGorgeousEvent* Event : RegisteredEvents)
+	{
+		if (Event != this && Event->ClassspaceParent != nullptr && Event->ClassspaceParent == this->GetClass()) // important to exclude the parent itself
+		{
+			Children.Add(Event);
+		}
+	}
+
+	return Children;
+}
+
 
 void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState, float DeltaTime,
                                                             int64 CurrentProcessingLoopCount)
@@ -257,6 +286,9 @@ void UGorgeousEvent::SwitchToProcessingState_Internal()
 void UGorgeousEvent::OnEventStateChanged_Implementation(const EGorgeousEventState_E OldEventState,
                                                         const EGorgeousEventState_E NewEventState)
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventStateChanged for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 		EventLoggingKey.ToString(), 2.f, false, true, this);
 }
@@ -264,54 +296,81 @@ void UGorgeousEvent::OnEventStateChanged_Implementation(const EGorgeousEventStat
 void UGorgeousEvent::ContinuousEventProcessingLoop_Implementation(EGorgeousEventState_E CurrentLoopState,
                                                                   float DeltaTime, int64 CurrentProcessingLoopCount)
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of ContinuousEventProcessingLoop for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 	EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventTriggered_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventTriggered for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventInitialized_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventInitialized for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventStarted_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventStarted for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventProcessing_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventProcessing for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventFinished_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventFinished for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventCanceled_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventCanceled for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventVoided_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventVoided for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }
 
 void UGorgeousEvent::OnEventCleanup_Implementation()
 {
+	if (!bIsDebuggingMode)
+		return;
+	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnEventCleanup for event with identifier: %s called, no action is performed!"), *UniqueIdentifier.ToString()),
 EventLoggingKey.ToString(), 2.f, false, true, this);
 }

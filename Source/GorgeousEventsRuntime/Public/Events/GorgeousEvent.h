@@ -88,6 +88,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 
 	//<================--- Friend Classes ---================>
 	friend class UGorgeousEventManagingInterface;
+	friend class UGorgeousUniqueClassspaceExecutionVoidingContext;
 	//<------------------------------------------------------>
 	
 	
@@ -213,6 +214,21 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "On Event Cleanup", Category = "Gorgeous Events|Event Callbacks")
 	void OnEventCleanup();
+
+
+	/**
+	 * @brief Returns the class-space parent that is sharing data with its child events.
+	 * @return The classspace parent that provides data to children 
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
+	UGorgeousEvent* GetClassspaceParent() const;
+
+	/**
+	 * @brief Return the children within a class-space. This function only works on class-pace parents.
+	 * @return Child events contained in the clas-space.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
+	TArray<UGorgeousEvent*> GetClassspaceChildren() const;
 	
 protected:
 	

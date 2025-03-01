@@ -26,14 +26,18 @@ public:
 	static UGorgeousEventVoidingInterface* GetEventVoidingInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Voiding")
-	virtual void VoidEvent(UGorgeousEvent* EventToVoid, TSubclassOf<UGorgeousEventVoidingContext> VoidingContext);
+	virtual bool VoidEvent(UGorgeousEvent* EventToVoid, TSubclassOf<UGorgeousEventVoidingContext> VoidingContext);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Voiding")
-	virtual void UnvoidEvent(UGorgeousEvent* EventToUnvoid);
+	virtual void UnvoidEvent(UGorgeousEvent* EventToUnvoid, bool bRegisterAgain);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding")
 	virtual bool IsEventVoided(UGorgeousEvent* EventToCheck);
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding")
 	virtual bool IsVoidable(UGorgeousEvent* EventToCheck);
+
+private:
+
+	TMap<TObjectPtr<UGorgeousEvent>, TPair<TObjectPtr<UGorgeousEventVoidingContext>, FTimerHandle>> VoidedEvents;
 };

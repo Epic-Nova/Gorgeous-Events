@@ -8,21 +8,20 @@
 |                   Epic Nova is an independent entity,                     |
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
-#pragma once
 
-#include "GorgeousEventsRuntimeMinimal.h"
-#include "GorgeousEventVoidingContext.generated.h"
+#include "VoidingContexts/GorgeousUniqueClassspaceExecutionVoidingContext.h"
+#include "GorgeousEvent.h"
+#include "Interfaces/GorgeousEventManagingInterface.h"
 
-UCLASS()
-class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingContext : public UObject
+void UGorgeousUniqueClassspaceExecutionVoidingContext::CheckVoidingNeed()
 {
-	GENERATED_BODY()
+	if (VoidedEvent->GetClassspaceChildren().Num() == 0)
+	{
+		const FGuid EventIdentifier = VoidedEvent->UniqueIdentifier;
+		
+		InvalidateVoiding(false);
 
-public:
-
-	virtual void CheckVoidingNeed();
-
-	void InvalidateVoiding(const bool bRegisterAgain) const;
-
-	TObjectPtr<UGorgeousEvent> VoidedEvent;
-};
+		UGorgeousLoggingBlueprintFunctionLibrary::LogSuccessMessage(FString::Printf(TEXT("Voided event with identifier: %s got resolved and garbage collected due to the children completed their execution!"),
+			*EventIdentifier.ToString()), "GT.Events.Voiding.Resolved");
+	}
+}

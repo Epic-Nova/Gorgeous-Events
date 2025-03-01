@@ -34,6 +34,9 @@ public:
 	virtual bool RegisterEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
+	virtual void ReregisterEvent(UGorgeousEvent* Event);
+
+	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
 	virtual bool UnregisterEvent(UGorgeousEvent* EventToUnregister);
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")
@@ -60,6 +63,8 @@ public:
 	virtual void LoadEventNative(TSoftClassPtr<UGorgeousEvent> EventToLoad, const FOnEventLoadedNative& OnEventLoaded);
 
 private:
+
+	FTimerHandle SetupProcessingLoopForEvent(UGorgeousEvent* Event) const;
 
 	static UGorgeousEventManagingInterface* SingletonInstance;
 

@@ -88,7 +88,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The evaluation of whether the event can be registered has been successfully completed. An attempt is now made to register the event and put it into active status.",
 				"GT.Events.Managing.RegisterEvent.EvaluationCompleted");
 
-			TObjectPtr<UGorgeousEvent> NewEvent = NewObject<UGorgeousEvent>(ConstructionHandle, EventToRegister);
+			const TObjectPtr<UGorgeousEvent> NewEvent = NewObject<UGorgeousEvent>(ConstructionHandle, EventToRegister);
 			NewEvent->UniqueIdentifier = ConstructionHandle->UniqueEventIdentifier;
 
 			// Sets this event interface as the cached owner. This is a fallback for when the outer reference is lost because of any reason I can not imagine (Absolute failsafe)
@@ -98,18 +98,8 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 			IncomingParent ? IncomingParent->RegisterWithRegistry(NewEvent) : UGorgeousRootObjectVariable::GetRootObjectVariable()->RegisterWithRegistry(NewEvent);
 			
 			ConstructionHandle->OnConstructionStartedDelegate.Broadcast(NewEvent);
-			
-			FTimerHandle EventProcessingLoopTimer;
-			GetWorld()->GetTimerManager().SetTimer(EventProcessingLoopTimer, [NewEvent, this]
-			{
-				const float DeltaTime = GetWorld()->GetDeltaSeconds();
-				static int64 CurrentProcessingLoopCount = 0;
-				CurrentProcessingLoopCount++;
-				
-				NewEvent->ContinuousProcessingLoopDelegate.Broadcast(NewEvent->EventState, DeltaTime, CurrentProcessingLoopCount);
-			}, NewEvent->CurrentProcessingLoopDelay, true);
 
-			CurrentRegisteredEvents.Add(NewEvent, EventProcessingLoopTimer);
+			CurrentRegisteredEvents.Add(NewEvent, SetupProcessingLoopForEvent(NewEvent));
 
 			ConstructionHandle->OnConstructionFinishedDelegate.AddLambda([&ConstructionHandle]
 			{
@@ -136,28 +126,38 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 	return false;
 }
 
+void UGorgeousEventManagingInterface::ReregisterEvent(UGorgeousEvent* Event)
+{
+	CurrentRegisteredEvents.Add(Event, SetupProcessingLoopForEvent(Event));
+}
+
 bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnregister)
 {
 	if (IsEventRegistered(EventToUnregister))
 	{
-		if (EventToUnregister->bUniqueClassspaceExecution && IsEventOfClassRegistered(EventToUnregister->ClassspaceParent, true))
-		{
-			UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
-			VoidingInterface->VoidEvent(EventToUnregister, UGorgeousUniqueClassspaceExecutionVoidingContext::StaticClass());
-
-			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
-				"GT.Events.Managing.UnregisterEvent.Voided_Instead");
-
-			return true;
-		}
 		for (auto Pair : CurrentRegisteredEvents)
 		{
 			if (Pair.Key == EventToUnregister)
 			{
-				Pair.Value.Invalidate();
+				GetWorld()->GetTimerManager().ClearTimer(Pair.Value);
+				if (EventToUnregister->GetClassspaceChildren().Num() > 0)
+				{
+					UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
+					VoidingInterface->VoidEvent(EventToUnregister, UGorgeousUniqueClassspaceExecutionVoidingContext::StaticClass());
+
+					const EGorgeousEventState_E PreviousEventState = EventToUnregister->EventState;
+					EventToUnregister->EventState = EGorgeousEventState_E::Event_State_Voided;
+					EventToUnregister->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToUnregister->EventState);
+					EventToUnregister->OnEventVoidedDelegate.Broadcast();
+					
+					UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
+						"GT.Events.Managing.UnregisterEvent.Voided_Instead");
+
+					return true;
+				}
 				UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(Pair.Key);
 				EventToUnregister->GetOuterUGorgeousConstructionHandle()->MarkAsGarbage();
-				return true;
+				return RemoveUnregisteredEvent(EventToUnregister);
 			}
 		}
 	}
@@ -176,8 +176,6 @@ bool UGorgeousEventManagingInterface::CancelEvent(UGorgeousEvent* EventToCancel)
 		EventToCancel->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToCancel->EventState);
 
 		EventToCancel->OnEventCleanupDelegate.Broadcast();
-		RemoveUnregisteredEvent(EventToCancel);
-		
 		return true;
 	}
 	return false;
@@ -224,7 +222,6 @@ bool UGorgeousEventManagingInterface::CompleteEvent(UGorgeousEvent* EventToCompl
 		EventToComplete->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToComplete->EventState);
 
 		EventToComplete->OnEventCleanupDelegate.Broadcast();
-		RemoveUnregisteredEvent(EventToComplete);
 		EventToComplete->bIsEventFinished = true;
 		return true;
 	}
@@ -300,4 +297,19 @@ void UGorgeousEventManagingInterface::LoadEventNative(TSoftClassPtr<UGorgeousEve
         UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage(FString::Printf(TEXT("Invalid event to load: %s"), *EventToLoad.ToString()),
             "GT.Events.Managing.LoadEvent.Invalid");
     }
+}
+
+FTimerHandle UGorgeousEventManagingInterface::SetupProcessingLoopForEvent(UGorgeousEvent* Event) const
+{
+	FTimerHandle EventProcessingLoopTimer;
+	GetWorld()->GetTimerManager().SetTimer(EventProcessingLoopTimer, [Event, this]
+	{
+		const float DeltaTime = GetWorld()->GetDeltaSeconds();
+		static int64 CurrentProcessingLoopCount = 0;
+		CurrentProcessingLoopCount++;
+				
+		Event->ContinuousProcessingLoopDelegate.Broadcast(Event->EventState, DeltaTime, CurrentProcessingLoopCount);
+	}, Event->CurrentProcessingLoopDelay, true);
+
+	return EventProcessingLoopTimer;
 }
