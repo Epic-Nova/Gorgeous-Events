@@ -20,6 +20,5 @@
 #include "GorgeousCoreMinimalShared.h"
 #include "GorgeousEventsRuntimeEnums.h"
 #include "GorgeousEventsRuntimeGlobals.h"
-#include "GorgeousEventsRuntimeLogging.h"
 #include "GorgeousEventsRuntimeMacros.h"
 #include "GorgeousEventsRuntimeStructures.h"

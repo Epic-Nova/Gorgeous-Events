@@ -101,5 +101,4 @@ void UGorgeousEvents_GIS::RegisterEventInterface(const TSubclassOf<UGorgeousEven
 	{
 		EventInterfaceInstances.Add(InterfaceToRegister, NewObject<UGorgeousEventInterface>(this, InterfaceToRegister));
 	}
-
 }
