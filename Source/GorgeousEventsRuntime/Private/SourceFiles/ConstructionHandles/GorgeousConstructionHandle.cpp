@@ -10,6 +10,10 @@
 <==========================================================================*/
 #include "ConstructionHandles/GorgeousConstructionHandle.h"
 
+#include "ConstructionHandles/AssignmentMappers/GorgeousAssignmentMapper.h"
+
+UGorgeousConstructionHandle::UGorgeousConstructionHandle(): CorrespondingAssigmentMapper(UGorgeousAssignmentMapper::StaticClass()) {}
+
 void UGorgeousConstructionHandle::PostInitProperties()
 {
 	UObject::PostInitProperties();
@@ -33,19 +37,24 @@ void UGorgeousConstructionHandle::PostInitProperties()
 	});
 }
 
+UGorgeousAssignmentMapper* UGorgeousConstructionHandle::GetAssigmentMapper()
+{
+	return AssigmentMapperReference;
+}
+
 void UGorgeousConstructionHandle::OnConstructionQueued_Internal()
 {
- // DO some preperations and the kick of the construction right away under the condition that the construction is allowed (Needed construction object variables must have been set first)
+	AssigmentMapperReference = NewObject<UGorgeousAssignmentMapper>(this, CorrespondingAssigmentMapper);
 }
 
 void UGorgeousConstructionHandle::OnConstructionStarted_Internal(UGorgeousEvent* Event)
 {
-	// Flush the assignment requests from the construction object variables to the constructing event
+	AssigmentMapperReference->FlushAssignedVariables(Event);
 }
 
 void UGorgeousConstructionHandle::OnConstructionCleanup_Internal()
 {
-
+	AssigmentMapperReference->MarkAsGarbage();
 }
 
 void UGorgeousConstructionHandle::OnConstructionQueued_Implementation()

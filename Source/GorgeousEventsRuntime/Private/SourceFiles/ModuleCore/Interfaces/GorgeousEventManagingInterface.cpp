@@ -307,8 +307,11 @@ FTimerHandle UGorgeousEventManagingInterface::SetupProcessingLoopForEvent(UGorge
 		const float DeltaTime = GetWorld()->GetDeltaSeconds();
 		static int64 CurrentProcessingLoopCount = 0;
 		CurrentProcessingLoopCount++;
-				
-		Event->ContinuousProcessingLoopDelegate.Broadcast(Event->EventState, DeltaTime, CurrentProcessingLoopCount);
+
+		if (Event)
+		{
+			Event->ContinuousProcessingLoopDelegate.Broadcast(Event->EventState, DeltaTime, CurrentProcessingLoopCount);
+		}
 	}, Event->CurrentProcessingLoopDelay, true);
 
 	return EventProcessingLoopTimer;

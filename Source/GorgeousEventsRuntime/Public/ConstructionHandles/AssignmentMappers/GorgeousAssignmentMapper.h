@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
+﻿// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
 /*==========================================================================>
 |              Gorgeous Events - Events functionality provider              |
 | ------------------------------------------------------------------------- |
@@ -10,15 +10,27 @@
 <==========================================================================*/
 #pragma once
 
+#include "GorgeousEventsRuntimeMinimal.h"
 #include "GorgeousAssignmentMapper.generated.h"
 
-UCLASS(Blueprintable, BlueprintType)
-class GORGEOUSEVENTSRUNTIME_API UGorgeousAssignmentMapper : public UObject
+class AEventTrigger_A;
+
+UCLASS()
+class GORGEOUSEVENTSRUNTIME_API UGorgeousAssignmentMapper : public UObject,
+	public IGorgeousSingleObjectVariablesSetter_I,
+	public IGorgeousArrayObjectVariablesSetter_I,
+	public IGorgeousMapObjectVariablesSetter_I,
+	public IGorgeousSetObjectVariablesSetter_I
 {
 	GENERATED_BODY()
 
 public:
+	
+	virtual UObject* SetObjectObjectSingleObjectVariable_Implementation(const FName OptionalVariableName, UObject*& NewValue) override;
 
+	virtual void FlushAssignedVariables(UGorgeousEvent* Event);
 
-	UGorgeousAssignmentMapper() {}
+private:
+
+	TObjectPtr<AEventTrigger_A> TriggerReference;
 };

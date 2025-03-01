@@ -114,6 +114,11 @@ void UGorgeousEvent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 	}
 }
 
+void UGorgeousEvent::InvokeInstancedFunctionality()
+{
+	//@TODO: Implement this
+}
+
 UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event_Trigger_Manual), EventState(EGorgeousEventState_E::Event_State_Invalid), bShouldSwitchToOngoing(false),
                                   ConstructionHandleClass(UGorgeousConstructionHandle::StaticClass()), CallingEvent(nullptr), bIsDebuggingMode(false), TriggerReference(nullptr),
                                   GlobalLoggingKey(FGameplayTag::RequestGameplayTag("GT.Events.Global")), SecondsToWait(0.1), EventTimeout(120), CurrentProcessingLoopDelay(1),

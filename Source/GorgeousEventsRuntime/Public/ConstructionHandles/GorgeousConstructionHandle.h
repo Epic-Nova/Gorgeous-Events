@@ -25,6 +25,7 @@
 
 //<=================--- Delegates ---=================>
 
+class UGorgeousAssignmentMapper;
 // The delegate for the construction handle queued.
 DECLARE_MULTICAST_DELEGATE(FGorgeousConstructionHandleQueued);
 
@@ -59,11 +60,7 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousConstructionHandleCleanup);
 <==========================================================================*/
 UCLASS(Blueprintable, BlueprintType, DisplayName = "Gorgeous Construction Handle", Category = "Gorgeous Events|Gorgeous Construction Handles", ClassGroup = "Gorgeous Events", Experimental, Transient,
 	meta = (ToolTip = "The base class for all Gorgeous Construction Handles", ShortTooltip = "Gorgeous Construction Handle", ShowWorldContextPin))
-class GORGEOUSEVENTSRUNTIME_API UGorgeousConstructionHandle : public UObject,
-public IGorgeousSingleObjectVariablesGetter_I, public IGorgeousSingleObjectVariablesSetter_I,
-public IGorgeousArrayObjectVariablesGetter_I, public IGorgeousArrayObjectVariablesSetter_I,
-public IGorgeousMapObjectVariablesGetter_I, public IGorgeousMapObjectVariablesSetter_I,
-public IGorgeousSetObjectVariablesGetter_I, public IGorgeousSetObjectVariablesSetter_I
+class GORGEOUSEVENTSRUNTIME_API UGorgeousConstructionHandle : public UObject
 
 {
 	GENERATED_BODY()
@@ -74,6 +71,8 @@ public IGorgeousSetObjectVariablesGetter_I, public IGorgeousSetObjectVariablesSe
 	//<============================--- Overrides ---============================>
 public:
 
+	UGorgeousConstructionHandle();
+	
 	// The equivalent to the OnConstruction function in the Unreal Engine.
 	virtual void PostInitProperties() override;
 	
@@ -120,6 +119,10 @@ public:
 	// The event that is called when the construction is cleaned up.
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "On Construction Cleanup", Category = "Gorgeous Events|Gorgeous Construction Handles")
 	void OnConstructionCleanup();
+
+
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Gorgeous Construction Handles")
+	UGorgeousAssignmentMapper* GetAssigmentMapper();
 	
 protected:
 	
@@ -142,11 +145,14 @@ private:
 public:
 
 	//The event class that should be constructed by this construction handle
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (DisplayName = "Event Class", ExposeOnSpawn = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
 	TSubclassOf<UGorgeousEvent> EventClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
+	TSubclassOf<UGorgeousAssignmentMapper> CorrespondingAssigmentMapper;
+
 	//The unique identifier associated with the constructing event
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (DisplayName = "Unique Event Identifier", ExposeOnSpawn = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = ( ExposeOnSpawn = true))
 	FGuid UniqueEventIdentifier;
 
 protected:
@@ -162,9 +168,6 @@ protected:
 
 private:
 
-	// The construction variables that are set by the object variable system during the construction of the event.
-	TArray<UGorgeousObjectVariable> ConstructionVariablesTrunk;
-
 	//<------------------------------------------------------------------------->
 
 	
@@ -174,6 +177,8 @@ public:
 protected:
 
 private:
+
+	TObjectPtr<UGorgeousAssignmentMapper> AssigmentMapperReference;
 	
 	//<------------------------------------------------------------------------->
 };

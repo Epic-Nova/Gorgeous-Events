@@ -1,25 +1,44 @@
-﻿// Epic Nova 2025
-
+﻿// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
+/*==========================================================================>
+|              Gorgeous Events - Events functionality provider              |
+| ------------------------------------------------------------------------- |
+|         Copyright (C) 2025 Gorgeous Things by Simsalabim Studios,         |
+|              administrated by Epic Nova. All rights reserved.             |
+| ------------------------------------------------------------------------- |
+|                   Epic Nova is an independent entity,                     |
+|         that has nothing in common with Epic Games in any capacity.       |
+<==========================================================================*/
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GorgeousEvent.h"
 #include "GameFramework/Actor.h"
 #include "EventTrigger_A.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, DisplayName = "Event Trigger", Category = "Gorgeous Events")
 class GORGEOUSEVENTSRUNTIME_API AEventTrigger_A : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AEventTrigger_A();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gorgeous Events")
+	TSoftClassPtr<UGorgeousEvent> EventToTrigger;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gorgeous Events")
+	EGorgeousEventTriggerType_E TriggerType;
+
+	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events")
+	void TriggerEvent();
+
+protected:
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
+	UGorgeousEvent* TriggeredEvent;
+
+private:
+
+	UFUNCTION()
+	void OnEventConstructionQueued(UGorgeousConstructionHandle* ConstructionHandle);
 };

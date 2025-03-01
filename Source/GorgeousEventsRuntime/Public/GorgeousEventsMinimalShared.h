@@ -23,9 +23,6 @@
 #include "GorgeousEventsRuntimeMacros.h"
 #include "GorgeousEventsRuntimeStructures.h"
 
-//Assignment Mappers Includes
-#include "AssignmentMappers/GorgeousAssignmentMapper.h"
-
 //Collection Runners Includes
 #include "CollectionRunners/GorgeousCollectionRunner.h"
 

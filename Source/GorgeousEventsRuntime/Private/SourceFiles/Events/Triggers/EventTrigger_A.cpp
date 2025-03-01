@@ -1,26 +1,52 @@
-﻿// Epic Nova 2025
-
+﻿// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
+/*==========================================================================>
+|              Gorgeous Events - Events functionality provider              |
+| ------------------------------------------------------------------------- |
+|         Copyright (C) 2025 Gorgeous Things by Simsalabim Studios,         |
+|              administrated by Epic Nova. All rights reserved.             |
+| ------------------------------------------------------------------------- |
+|                   Epic Nova is an independent entity,                     |
+|         that has nothing in common with Epic Games in any capacity.       |
+<==========================================================================*/
 
 #include "Triggers/EventTrigger_A.h"
 
+#include "ConstructionHandles/AssignmentMappers/GorgeousAssignmentMapper.h"
+#include "Interfaces/GorgeousEventConstructionInterface.h"
+#include "Interfaces/GorgeousEventManagingInterface.h"
 
-// Sets default values
-AEventTrigger_A::AEventTrigger_A()
+
+AEventTrigger_A::AEventTrigger_A(): TriggerType(EGorgeousEventTriggerType_E::Event_Trigger_Manual),
+                                    TriggeredEvent(nullptr)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
-// Called when the game starts or when spawned
-void AEventTrigger_A::BeginPlay()
+void AEventTrigger_A::TriggerEvent()
 {
-	Super::BeginPlay();
+	UGorgeousEventConstructionInterface* ConstructionInterface = UGorgeousEventConstructionInterface::GetEventConstructionInterface();
+	FOnEventConstructionQueued ConstructionQueued;
+	ConstructionQueued.BindDynamic(this, &AEventTrigger_A::OnEventConstructionQueued);
+	ConstructionInterface->QueueEventConstruction(EventToTrigger, FGuid::NewGuid(), ConstructionQueued);
+}
+
+void AEventTrigger_A::OnEventConstructionQueued(UGorgeousConstructionHandle* ConstructionHandle)
+{
+	UObject* TriggerReference = this;
+	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "EventTrigger", TriggerReference);
 	
-}
+	if (ConstructionHandle->EventClass.GetDefaultObject()->TriggerType == TriggerType)
+	{
+		UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+		ManagingInterface->TriggerEvent(ConstructionHandle, TriggeredEvent);
+	}
+	else
+	{
+		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage(FString::Printf(TEXT("The event with the identifier: %s could not be triggered because the Trigger type does not match with the one in the event!"),
+			*ConstructionHandle->UniqueEventIdentifier.ToString()), "GT.Events.Trigger.Invalid_Type_Match");
 
-// Called every frame
-void AEventTrigger_A::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+		UGorgeousEventConstructionInterface* ConstructionInterface = UGorgeousEventConstructionInterface::GetEventConstructionInterface();
+		ConstructionInterface->CancelEventConstruction(ConstructionHandle);
+	}
 }
 

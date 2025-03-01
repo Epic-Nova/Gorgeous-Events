@@ -89,6 +89,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 	//<================--- Friend Classes ---================>
 	friend class UGorgeousEventManagingInterface;
 	friend class UGorgeousUniqueClassspaceExecutionVoidingContext;
+	friend class UGorgeousAssignmentMapper;
 	//<------------------------------------------------------>
 	
 	
@@ -103,6 +104,9 @@ public:
 	
 	// Used to change the values of properties to comply with the edit condition meta tags
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	// Functionality for when the event is already instanced from e.g. ConditionalObjectChooser to instanciate this event
+	virtual void InvokeInstancedFunctionality() override;
 	
 protected:
 

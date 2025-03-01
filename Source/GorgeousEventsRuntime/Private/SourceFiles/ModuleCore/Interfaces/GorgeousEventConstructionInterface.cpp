@@ -74,7 +74,7 @@ bool UGorgeousEventConstructionInterface::CancelEventConstruction(UGorgeousConst
 		{
 			ConstructionToCancel->OnConstructionCleanupDelegate.Broadcast();
 
-			RemoveConstructionHandleFromQueue(ConstructionToCancel);
+			RemoveConstructionHandleFromQueue(ConstructionToCancel, true);
 
 			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Canceled event construction for: %s with unique identifier: %s"),
 				*ConstructionToCancel->EventClass->GetName(), *ConstructionToCancel->UniqueEventIdentifier.ToString()),

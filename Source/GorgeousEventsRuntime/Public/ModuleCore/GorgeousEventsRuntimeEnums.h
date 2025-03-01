@@ -36,7 +36,7 @@ enum class EGorgeousEventTriggerType_E : uint8
 {
 	Event_Trigger_Manual = 0 UMETA(DisplayName = "Manual", ToolTip = "The event is triggered manually."),
 	Event_Trigger_WorldObjectOverlap = 1 UMETA(DisplayName = "World Object Overlap", ToolTip = "The event is triggered after an overlap with another object."),
-	Event_Trigger_AfterInteraction = 2 UMETA(DisplayName = "After Interaction", ToolTip = "The event is triggered ater an interaction."),
+	Event_Trigger_Interaction = 2 UMETA(DisplayName = "Interaction", ToolTip = "The event is triggered ater an interaction."),
 	Event_Trigger_MAX = 3 UMETA(Hidden)
 };
 
