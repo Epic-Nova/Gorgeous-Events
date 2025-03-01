@@ -28,7 +28,10 @@ public:
 	
 	virtual UObject* SetObjectObjectSingleObjectVariable_Implementation(const FName OptionalVariableName, UObject*& NewValue) override;
 
-	virtual void FlushAssignedVariables(UGorgeousEvent* Event);
+	UFUNCTION(BlueprintNativeEvent, Category = "Gorgeous Events|Gorgeous Assignment Mapper")
+	void FlushAssignedVariables(UGorgeousEvent* Event);
+
+	virtual void FlushAssignedVariables_Native(UGorgeousEvent* Event);
 
 private:
 

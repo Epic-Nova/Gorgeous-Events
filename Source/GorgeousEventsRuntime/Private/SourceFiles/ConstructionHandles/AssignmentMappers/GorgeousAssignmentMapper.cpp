@@ -20,7 +20,17 @@ UObject* UGorgeousAssignmentMapper::SetObjectObjectSingleObjectVariable_Implemen
 	return NewValue;
 }
 
-void UGorgeousAssignmentMapper::FlushAssignedVariables(UGorgeousEvent* Event)
+void UGorgeousAssignmentMapper::FlushAssignedVariables_Native(UGorgeousEvent* Event)
 {
 	Event->TriggerReference = TriggerReference;
+	FlushAssignedVariables(Event);
+}
+
+void UGorgeousAssignmentMapper::FlushAssignedVariables_Implementation(UGorgeousEvent* Event)
+{
+	if (!Event->bIsDebuggingMode)
+		return;
+	
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of FlushAssignedVariables called, no action is performed!")),
+		Event->EventLoggingKey.ToString());
 }

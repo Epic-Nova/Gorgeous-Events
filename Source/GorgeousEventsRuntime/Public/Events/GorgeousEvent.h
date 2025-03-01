@@ -90,6 +90,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 	friend class UGorgeousEventManagingInterface;
 	friend class UGorgeousUniqueClassspaceExecutionVoidingContext;
 	friend class UGorgeousAssignmentMapper;
+	friend class UGorgeousConstructionHandle;
 	//<------------------------------------------------------>
 	
 	

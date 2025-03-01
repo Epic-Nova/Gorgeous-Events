@@ -49,7 +49,7 @@ void UGorgeousConstructionHandle::OnConstructionQueued_Internal()
 
 void UGorgeousConstructionHandle::OnConstructionStarted_Internal(UGorgeousEvent* Event)
 {
-	AssigmentMapperReference->FlushAssignedVariables(Event);
+	AssigmentMapperReference->FlushAssignedVariables_Native(Event);
 }
 
 void UGorgeousConstructionHandle::OnConstructionCleanup_Internal()
@@ -59,19 +59,28 @@ void UGorgeousConstructionHandle::OnConstructionCleanup_Internal()
 
 void UGorgeousConstructionHandle::OnConstructionQueued_Implementation()
 {
-	UGorgeousLoggingBlueprintFunctionLibrary::LogWarningMessage("Default implementation of OnConstructionQueued called. This should be overridden in the child class.",
-		"GT.Events.Construction.Queue.DefaultQueued");
+	if (!EventClass.GetDefaultObject()->bIsDebuggingMode)
+		return;
+	
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnConstructionQueued called, no action is performed!")),
+		EventClass.GetDefaultObject()->EventLoggingKey.ToString());
 }
 
 void UGorgeousConstructionHandle::OnConstructionStarted_Implementation(UGorgeousEvent* Event)
 {
-	UGorgeousLoggingBlueprintFunctionLibrary::LogWarningMessage("Default implementation of OnConstructionStarted called. This should be overridden in the child class.",
-		"GT.Events.Construction.Queue.DefaultStarted");
+	if (!EventClass.GetDefaultObject()->bIsDebuggingMode)
+		return;
+	
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnConstructionStarted called, no action is performed!")),
+		EventClass.GetDefaultObject()->EventLoggingKey.ToString());
 }
 
 void UGorgeousConstructionHandle::OnConstructionCleanup_Implementation()
 {
-	UGorgeousLoggingBlueprintFunctionLibrary::LogWarningMessage("Default implementation of OnConstructionCleanup called. This should be overridden in the child class.",
-		"GT.Events.Construction.Queue.DefaultCleanup");
+	if (!EventClass.GetDefaultObject()->bIsDebuggingMode)
+		return;
+	
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of OnConstructionCleanup called, no action is performed!")),
+		EventClass.GetDefaultObject()->EventLoggingKey.ToString());
 }
 
