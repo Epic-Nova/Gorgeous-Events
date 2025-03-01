@@ -12,16 +12,16 @@
 
 #include "GorgeousEventsRuntimeMinimal.h"
 #include "GorgeousEventVoidingContext.h"
-#include "GorgeousUniqueClassspaceExecutionVoidingContext.generated.h"
+#include "GorgeousClassspaceExecutionVoidingContext.generated.h"
 
 /**
- * Void the event with UGorgeousUniqueClassspaceExecutionVoidingContext as the reason for why this event got voided.
+ * Void the event with UGorgeousClassspaceExecutionVoidingContext as the reason for why this event got voided.
  * the context then should periodically check if the condition is not there anymore, when no dependencies exist anymore then we can safely delete this event with UnregisterEvent
  *
  * We do this because we don't want to lose the parent chain of the child, as the classspace execution system allowes specific events to share variables and context information as they were one single class, but they are still seperated
  */
 UCLASS()
-class GORGEOUSEVENTSRUNTIME_API UGorgeousUniqueClassspaceExecutionVoidingContext : public UGorgeousEventVoidingContext
+class GORGEOUSEVENTSRUNTIME_API UGorgeousClassspaceExecutionVoidingContext : public UGorgeousEventVoidingContext
 {
 	GENERATED_BODY()
 

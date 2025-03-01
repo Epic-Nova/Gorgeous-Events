@@ -9,11 +9,10 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 
-#include "VoidingContexts/GorgeousUniqueClassspaceExecutionVoidingContext.h"
+#include "VoidingContexts/GorgeousClassspaceExecutionVoidingContext.h"
 #include "GorgeousEvent.h"
-#include "Interfaces/GorgeousEventManagingInterface.h"
 
-void UGorgeousUniqueClassspaceExecutionVoidingContext::CheckVoidingNeed()
+void UGorgeousClassspaceExecutionVoidingContext::CheckVoidingNeed()
 {
 	if (VoidedEvent->GetClassspaceChildren().Num() == 0)
 	{

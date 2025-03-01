@@ -14,7 +14,7 @@
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
-#include "VoidingContexts/GorgeousUniqueClassspaceExecutionVoidingContext.h"
+#include "VoidingContexts/GorgeousClassspaceExecutionVoidingContext.h"
 
 UGorgeousEventManagingInterface* UGorgeousEventManagingInterface::SingletonInstance = nullptr;
 
@@ -143,7 +143,7 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 				if (EventToUnregister->GetClassspaceChildren().Num() > 0)
 				{
 					UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
-					VoidingInterface->VoidEvent(EventToUnregister, UGorgeousUniqueClassspaceExecutionVoidingContext::StaticClass());
+					VoidingInterface->VoidEvent(EventToUnregister, UGorgeousClassspaceExecutionVoidingContext::StaticClass());
 
 					const EGorgeousEventState_E PreviousEventState = EventToUnregister->EventState;
 					EventToUnregister->EventState = EGorgeousEventState_E::Event_State_Voided;
