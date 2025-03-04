@@ -47,7 +47,7 @@ void UGorgeousEventVoidingInterface::UnvoidEvent(UGorgeousEvent* EventToUnvoid, 
 		if (!bRegisterAgain)
 		{
 			UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(EventToUnvoid);
-			EventToUnvoid->GetOuterUGorgeousConstructionHandle()->MarkAsGarbage();
+			EventToUnvoid->GetOuter()->MarkAsGarbage();
 		}
 		else
 		{

@@ -135,12 +135,12 @@ UGorgeousConstructionHandle* UGorgeousEventConstructionInterface::GetConstructio
 	return nullptr;
 }
 
-bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove, bool bDeleteHandle)
+bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueue(UGorgeousConstructionHandle* HandleToRemove, const bool bDeleteHandle)
 {
 	return RemoveConstructionHandleFromQueueByGuid(HandleToRemove->UniqueEventIdentifier, bDeleteHandle);
 }
 
-bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueueByGuid(const FGuid EventGuid, bool bDeleteHandle)
+bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueueByGuid(const FGuid EventGuid, const bool bDeleteHandle)
 {
 	if (IsEventInConstructionQueue(EventGuid))
 	{

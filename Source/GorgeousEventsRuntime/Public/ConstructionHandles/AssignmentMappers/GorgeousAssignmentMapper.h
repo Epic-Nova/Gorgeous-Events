@@ -35,5 +35,5 @@ public:
 
 private:
 
-	TObjectPtr<AEventTrigger_A> TriggerReference;
+	TObjectPtr<AEventTrigger_A> EventInstigator;
 };

@@ -87,7 +87,14 @@ private:
 	
 	//<=======================--- Blueprint Functions ---=======================>
 public:
-
+	/**
+	 * Overrides the default event interface for a specific defined class you want.
+	 * Note that when doing so that every current registered event will lose their outer and therefore will be invalid and garbage collected.
+	 *
+	 * 
+	 * @param DefaultInterface The interface that is normaly in this place.
+	 * @param OverrideInterface The interface that should replace the default one.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events")
 	void OverrideDefaultEventInterface(TSubclassOf<UGorgeousEventInterface> DefaultInterface, TSubclassOf<UGorgeousEventInterface> OverrideInterface);
 	
@@ -118,7 +125,7 @@ protected:
 private:
 
 	//Registers an event interface as instance for calling the function implementations for the events under the condition that the interface is listed as a default interface.
-	void RegisterEventInterface(const TSubclassOf<UGorgeousEventInterface>& InterfaceToRegister);
+	void RegisterEventInterface(const TSubclassOf<UGorgeousEventInterface>& InterfaceToRegister, UGorgeousEventInterface* OldInterface);
 
 	//<------------------------------------------------------------------------->
 

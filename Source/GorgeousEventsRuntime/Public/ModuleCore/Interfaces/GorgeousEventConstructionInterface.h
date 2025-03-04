@@ -21,6 +21,8 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventConstructionInterface : public UGo
 {
 	GENERATED_BODY()
 
+	friend class UGorgeousEvent;
+	
 public:
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction", meta = (CompactNodeTitle = "Gorgeous Event Construction"))

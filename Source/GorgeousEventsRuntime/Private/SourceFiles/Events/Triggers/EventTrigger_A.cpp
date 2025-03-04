@@ -33,7 +33,7 @@ void AEventTrigger_A::TriggerEvent()
 void AEventTrigger_A::OnEventConstructionQueued(UGorgeousConstructionHandle* ConstructionHandle)
 {
 	UObject* TriggerReference = this;
-	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "EventTrigger", TriggerReference);
+	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "Instigator", TriggerReference);
 	
 	if (ConstructionHandle->EventClass.GetDefaultObject()->TriggerType == TriggerType)
 	{

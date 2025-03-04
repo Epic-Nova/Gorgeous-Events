@@ -16,7 +16,7 @@ void UGorgeousEvents_GIS::Initialize(FSubsystemCollectionBase& Collection)
 
 	for (TPair InterfacePair : EventInterfaces)
 	{
-		RegisterEventInterface(InterfacePair.Key);
+		RegisterEventInterface(InterfacePair.Key, nullptr);
 	}
 }
 
@@ -35,8 +35,8 @@ UGorgeousEvents_GIS::UGorgeousEvents_GIS()
 	};
 }
 
-void UGorgeousEvents_GIS::OverrideDefaultEventInterface(TSubclassOf<UGorgeousEventInterface> DefaultInterface,
-                                                        TSubclassOf<UGorgeousEventInterface> OverrideInterface)
+void UGorgeousEvents_GIS::OverrideDefaultEventInterface(const TSubclassOf<UGorgeousEventInterface> DefaultInterface,
+                                                        const TSubclassOf<UGorgeousEventInterface> OverrideInterface)
 {
 	if (!DefaultInterface || !OverrideInterface)
 	{
@@ -62,8 +62,9 @@ void UGorgeousEvents_GIS::OverrideDefaultEventInterface(TSubclassOf<UGorgeousEve
 	else
 	{
 		EventInterfaces[DefaultInterface] = OverrideInterface;
+		
 		EventInterfaceInstances.Remove(DefaultInterface);
-		RegisterEventInterface(DefaultInterface);
+		RegisterEventInterface(DefaultInterface, EventInterfaceInstances[DefaultInterface]);
 	}
 }
 
@@ -80,7 +81,7 @@ TObjectPtr<UGorgeousEventInterface> UGorgeousEvents_GIS::GetRegisteredEventsInte
 	return nullptr;
 }
 
-void UGorgeousEvents_GIS::RegisterEventInterface(const TSubclassOf<UGorgeousEventInterface>& InterfaceToRegister)
+void UGorgeousEvents_GIS::RegisterEventInterface(const TSubclassOf<UGorgeousEventInterface>& InterfaceToRegister, UGorgeousEventInterface* OldInterface)
 {
 	for (const auto& Pair : EventInterfaceInstances)
 	{
@@ -99,6 +100,32 @@ void UGorgeousEvents_GIS::RegisterEventInterface(const TSubclassOf<UGorgeousEven
 	}
 	else
 	{
-		EventInterfaceInstances.Add(InterfaceToRegister, NewObject<UGorgeousEventInterface>(this, InterfaceToRegister));
+		UGorgeousEventInterface* NewInterface = NewObject<UGorgeousEventInterface>(this, InterfaceToRegister);
+		EventInterfaceInstances.Add(InterfaceToRegister, NewInterface);
+
+
+		if (!OldInterface)
+			return;
+		
+		/**
+		 * Functionality to update the failsafe reference or the outer when either one of the crutial managing interfaces changes
+		 **/
+		if (NewInterface->IsA<UGorgeousEventManagingInterface>())
+		{
+			for (const UGorgeousEventManagingInterface* ManagingInterface = Cast<UGorgeousEventManagingInterface>(OldInterface); const auto Event : ManagingInterface->GetRegisteredEvents())
+			{
+				Event->SetCachedOwner(NewInterface);
+			}
+		}
+		else if (NewInterface->IsA<UGorgeousEventConstructionInterface>())
+		{
+			for (const UGorgeousEventManagingInterface* ManagingInterface = Cast<UGorgeousEventManagingInterface>(OldInterface); const auto Event : ManagingInterface->GetRegisteredEvents())
+			{
+				Event->Rename(*Event->GetName(), NewInterface);
+			}
+		}
+
+		OldInterface->MarkAsGarbage();
 	}
+	
 }

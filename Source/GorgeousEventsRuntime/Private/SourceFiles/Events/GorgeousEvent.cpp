@@ -10,7 +10,9 @@
 <==========================================================================*/
 #include "GorgeousEvent.h"
 
+#include "GorgeousEventsRuntimeModule.h"
 #include "ConstructionHandles/GorgeousConstructionHandle.h"
+#include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventManagingInterface.h"
 #include "Interfaces/GorgeousEventStatisticsInterface.h"
 
@@ -116,16 +118,34 @@ void UGorgeousEvent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 
 void UGorgeousEvent::InvokeInstancedFunctionality()
 {
-	//@TODO: Implement this
+	UGorgeousConstructionHandle* NewConstructionHandle = NewObject<UGorgeousConstructionHandle>(UGorgeousEventConstructionInterface::GetEventConstructionInterface(), ConstructionHandleClass);
+	NewConstructionHandle->EventClass = GetClass();
+	NewConstructionHandle->UniqueEventIdentifier = FGuid::NewGuid();
+	Rename(*GetName(), NewConstructionHandle);
+
+	UGorgeousEventConstructionInterface* ConstructionInterface = UGorgeousEventConstructionInterface::GetEventConstructionInterface();
+	ConstructionInterface->ConstructionQueue.Add(NewConstructionHandle->UniqueEventIdentifier, NewConstructionHandle);
+	NewConstructionHandle->OnConstructionQueuedDelegate.Broadcast();
+	
+
+	UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
+	
+	UGorgeousEvent* SelfReference;
+	ManagingInterface->TriggerEvent(NewConstructionHandle, SelfReference);
+	
 }
 
-UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event_Trigger_Manual), EventState(EGorgeousEventState_E::Event_State_Invalid), bShouldSwitchToOngoing(false),
-                                  ConstructionHandleClass(UGorgeousConstructionHandle::StaticClass()), CallingEvent(nullptr), bIsDebuggingMode(false), TriggerReference(nullptr),
-                                  GlobalLoggingKey(FGameplayTag::RequestGameplayTag("GT.Events.Global")), SecondsToWait(0.1), EventTimeout(120), CurrentProcessingLoopDelay(1),
-                                  PreviousEventState(EGorgeousEventState_E::Event_State_Invalid), bIsUnique(false), AgainstCheck(StaticClass()),
-                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false), bIsEventFinished(false)
-{
-}
+UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event_Trigger_Manual),
+                                  EventState(EGorgeousEventState_E::Event_State_Invalid), bShouldSwitchToProcessing(true),
+                                  ConstructionHandleClass(UGorgeousConstructionHandle::StaticClass()),
+                                  CallingEvent(nullptr), bIsDebuggingMode(false), EventInstigator(nullptr),
+                                  GlobalLoggingKey(FGameplayTag::RequestGameplayTag("GT.Events.Global")),
+                                  SecondsToWait(0.1), EventTimeout(120), CurrentProcessingLoopDelay(1),
+                                  PreviousEventState(EGorgeousEventState_E::Event_State_Invalid), bIsUnique(false),
+                                  AgainstCheck(StaticClass()),
+                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false),
+                                  bIsEventFinished(false)
+{}
 
 UGorgeousEvent::~UGorgeousEvent()
 {
@@ -172,7 +192,7 @@ void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_
 	case EGorgeousEventState_E::Event_State_Initialized:
 		break;
 	case EGorgeousEventState_E::Event_State_Started:
-		if (bShouldSwitchToOngoing)
+		if (bShouldSwitchToProcessing)
 		{
 			SwitchToProcessingState_Internal();
 		}

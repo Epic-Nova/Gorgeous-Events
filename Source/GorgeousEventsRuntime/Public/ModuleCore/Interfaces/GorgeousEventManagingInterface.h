@@ -10,6 +10,7 @@
 <==========================================================================*/
 #pragma once
 
+#include "GorgeousEvent.h"
 #include "GorgeousEventsRuntimeMinimal.h"
 #include "GorgeousEventManagingInterface.generated.h"
 
@@ -22,6 +23,8 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventManagingInterface : public UGorgeo
 {
 	GENERATED_BODY()
 
+	friend class UGorgeousEvent;
+	
 public:
 
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Managing", meta = (CompactNodeTitle = "Gorgeous Event Management"))
@@ -69,5 +72,7 @@ private:
 	static UGorgeousEventManagingInterface* SingletonInstance;
 
 	TMap<TObjectPtr<UGorgeousEvent>, FTimerHandle> CurrentRegisteredEvents;
+
+	bool RegisterEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent, UGorgeousEvent* AlreadyInstancedEvent = nullptr);
 	
 };

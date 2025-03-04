@@ -80,7 +80,7 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousEventCleanup);
 <---------------------------=== TODOs & Notes ===--------------------------->
 <--------------------------------------------------------------------------->
 <==========================================================================*/
-UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Event", Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient, Within = GorgeousConstructionHandle,
+UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Event", Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
 	meta = (ToolTip = "The base class for all Gorgeous Events.", ShortTooltip = "Gorgeous Event", ExposedAsyncProxy = GorgeousEventAsyncAction))
 class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 {
@@ -252,9 +252,9 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
 	EGorgeousEventState_E EventState;
 
-	//Weather the event should switch to the ongoing state. This can be used by events that called another event, after the property initialisation.
+	//Weather the event should switch to the processing state. This can be used by events that called another event, after the property initialisation.
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Gorgeous Events")
-	bool bShouldSwitchToOngoing;
+	bool bShouldSwitchToProcessing;
 	
 	
 	//The class pointer reference to the default construction handle for this event.
@@ -279,7 +279,7 @@ protected:
 	
 	//The trigger that kicked off the execution of this event.
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
-	AEventTrigger_A* TriggerReference;
+	AEventTrigger_A* EventInstigator;
 	
 	//The logging key that should be used for global logging entries.
 	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Logging")
@@ -378,10 +378,10 @@ protected:
 	
 private:
 
-	// The internal function that is called when the event should switch to the ongoing state
+	// The internal function that is called when the event should switch to the processing state
 	void SwitchToStartedState_Internal();
 	
-	// The internal function that is called when the event should switch to the ongoing state
+	// The internal function that is called when the event should switch to the processing state
 	void SwitchToProcessingState_Internal();
 
 	//<------------------------------------------------------------------------->
@@ -391,7 +391,7 @@ private:
 public:
 	
 protected:
-
+	
 private:
 
 	//Weather the event execution is finished and nothing else is going to kick of anymore.
@@ -399,6 +399,8 @@ private:
 
 	//The timer handle to the event timeout. Only valid if the event timeout variable is set.
 	FTimerHandle EventTimeoutTimerHandle;
+
+
 	
 	//<------------------------------------------------------------------------->
 };

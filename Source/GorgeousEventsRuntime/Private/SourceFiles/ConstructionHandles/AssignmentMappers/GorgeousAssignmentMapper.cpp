@@ -9,21 +9,25 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "ConstructionHandles/AssignmentMappers/GorgeousAssignmentMapper.h"
+
+#include "ConstructionHandles/GorgeousConstructionHandle.h"
 #include "Triggers/EventTrigger_A.h"
 
 UObject* UGorgeousAssignmentMapper::SetObjectObjectSingleObjectVariable_Implementation(const FName OptionalVariableName, UObject*& NewValue)
 {
-	if (OptionalVariableName == TEXT("EventTrigger"))
+	if (OptionalVariableName == TEXT("EventInstigator"))
 	{
-		TriggerReference = Cast<AEventTrigger_A>(NewValue);
+		EventInstigator = Cast<AEventTrigger_A>(NewValue);
 	}
 	return NewValue;
 }
 
 void UGorgeousAssignmentMapper::FlushAssignedVariables_Native(UGorgeousEvent* Event)
 {
-	Event->TriggerReference = TriggerReference;
+	Event->EventInstigator = EventInstigator;
 	FlushAssignedVariables(Event);
+	
+	Cast<UGorgeousConstructionHandle>(Event->GetOuter())->OnConstructionFinishedDelegate.Broadcast();
 }
 
 void UGorgeousAssignmentMapper::FlushAssignedVariables_Implementation(UGorgeousEvent* Event)
@@ -33,4 +37,5 @@ void UGorgeousAssignmentMapper::FlushAssignedVariables_Implementation(UGorgeousE
 	
 	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of FlushAssignedVariables called, no action is performed!")),
 		Event->EventLoggingKey.ToString());
+
 }

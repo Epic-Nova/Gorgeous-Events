@@ -36,7 +36,13 @@ void UGorgeousEventManagingInterface::LoadEvent(const TSoftClassPtr<UGorgeousEve
 
 bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent)
 {
-	if (IsValid(ConstructionHandle))
+	return RegisterEvent_Internal(ConstructionHandle, RegisteredEvent);
+}
+
+bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle,
+	UGorgeousEvent*& RegisteredEvent, UGorgeousEvent* AlreadyInstancedEvent)
+{
+		if (IsValid(ConstructionHandle))
 	{
 		const TSubclassOf<UGorgeousEvent> EventToRegister = ConstructionHandle->EventClass;
 
@@ -88,7 +94,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The evaluation of whether the event can be registered has been successfully completed. An attempt is now made to register the event and put it into active status.",
 				"GT.Events.Managing.RegisterEvent.EvaluationCompleted");
 
-			const TObjectPtr<UGorgeousEvent> NewEvent = NewObject<UGorgeousEvent>(ConstructionHandle, EventToRegister);
+			const TObjectPtr<UGorgeousEvent> NewEvent = AlreadyInstancedEvent ? AlreadyInstancedEvent : NewObject<UGorgeousEvent>(ConstructionHandle, EventToRegister);
 			NewEvent->UniqueIdentifier = ConstructionHandle->UniqueEventIdentifier;
 
 			// Sets this event interface as the cached owner. This is a fallback for when the outer reference is lost because of any reason I can not imagine (Absolute failsafe)
@@ -105,8 +111,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 			{
 				ConstructionHandle->OnConstructionCleanupDelegate.Broadcast();
 			});
-
-
+			
 			UGorgeousLoggingBlueprintFunctionLibrary::LogSuccessMessage("The event was successfully registered, that's Gorgeous!","GT.Events.Managing.RegisterEvent.Success");
 			
 			RegisteredEvent = NewEvent;
@@ -125,6 +130,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Construction Handle reference is not valid, aborting Event registration.","GT.Events.Construction.Queue.InvalidHandle");
 	return false;
 }
+
 
 void UGorgeousEventManagingInterface::ReregisterEvent(UGorgeousEvent* Event)
 {
@@ -156,7 +162,7 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 					return true;
 				}
 				UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(Pair.Key);
-				EventToUnregister->GetOuterUGorgeousConstructionHandle()->MarkAsGarbage();
+				EventToUnregister->GetOuter()->MarkAsGarbage();
 				return RemoveUnregisteredEvent(EventToUnregister);
 			}
 		}
