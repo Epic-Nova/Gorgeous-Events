@@ -25,10 +25,6 @@ public:
 	//The state that the executing event needs for this event to be kicked off.
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
 	EGorgeousEventState_E RunOnParentState;
-
-	//The event that is handling this event as a sub event.
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
-	UGorgeousEvent* Parent;
 };
 
 //@TODO: Subevents are events that use the data from the invoking event to satisfy their execution. So they theoretically don't need extra data and can be invoked by the parent event at any given time

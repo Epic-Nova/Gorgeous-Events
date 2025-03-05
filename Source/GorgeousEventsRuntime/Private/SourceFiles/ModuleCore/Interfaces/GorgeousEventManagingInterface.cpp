@@ -117,6 +117,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 
 			//Makes the event eligible for Runtime Object Variables
 			IncomingParent ? IncomingParent->RegisterWithRegistry(NewEvent) : UGorgeousRootObjectVariable::GetRootObjectVariable()->RegisterWithRegistry(NewEvent);
+			IncomingParent ? NewEvent->SetParent(IncomingParent) : NewEvent->SetParent(UGorgeousRootObjectVariable::GetRootObjectVariable());
 			
 			ConstructionHandle->OnConstructionStartedDelegate.Broadcast(NewEvent);
 
