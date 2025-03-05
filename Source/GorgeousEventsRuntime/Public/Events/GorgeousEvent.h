@@ -24,6 +24,7 @@
 //<===========--- Forward Declarations ---===========>
 class UGorgeousConstructionHandle;
 class AEventTrigger_A;
+class UGorgeousSubEvent;
 //<-------------------------------------------------->
 
 //<=================--- Delegates ---=================>
@@ -82,7 +83,7 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousEventCleanup);
 <==========================================================================*/
 UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Event", Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
 	meta = (ToolTip = "The base class for all Gorgeous Events.", ShortTooltip = "Gorgeous Event", ExposedAsyncProxy = GorgeousEventAsyncAction))
-class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
+class UGorgeousEvent : public UGorgeousObjectVariable
 {
 	GENERATED_BODY()
 
@@ -90,6 +91,8 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 	friend class UGorgeousEventManagingInterface;
 	friend class UGorgeousAssignmentMapper;
 	friend class UGorgeousConstructionHandle;
+	friend class AEventTrigger_A;
+	friend class UGorgeousSubEventExecutionVoidingContext;
 	//<------------------------------------------------------>
 	
 	
@@ -156,6 +159,31 @@ private:
 public:
 	
 	/**
+	 * @brief Returns the class-space parent that is sharing data with its child events.
+	 * @return The classspace parent that provides data to children 
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
+	UGorgeousEvent* GetClassspaceParent() const;
+
+	/**
+	 * @brief Return the children within a class-space. This function only works on class-pace parents.
+	 * @return Child events contained in the clas-space.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
+	TArray<UGorgeousEvent*> GetClassspaceChildren() const;
+
+
+	/**
+	 * @brief Weather the execution of a specific sub event is finished or not
+	 * @param SubEvent The sub event to perform the check on
+	 * @return True if the execution is finished.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Sub Events")
+	bool IsSubEventFinished(const UGorgeousSubEvent* SubEvent);
+	
+protected:
+	
+	/**
 	 * @brief Called when this event is processing continuously. This function is used to process the event continuously.
 	 * 
 	 * @param CurrentLoopState The current event state in the loop.
@@ -218,23 +246,6 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "On Event Cleanup", Category = "Gorgeous Events|Event Callbacks")
 	void OnEventCleanup();
-
-
-	/**
-	 * @brief Returns the class-space parent that is sharing data with its child events.
-	 * @return The classspace parent that provides data to children 
-	 */
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
-	UGorgeousEvent* GetClassspaceParent() const;
-
-	/**
-	 * @brief Return the children within a class-space. This function only works on class-pace parents.
-	 * @return Child events contained in the clas-space.
-	 */
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
-	TArray<UGorgeousEvent*> GetClassspaceChildren() const;
-	
-protected:
 	
 private:
 	
@@ -248,7 +259,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gorgeous Events")
 	EGorgeousEventTriggerType_E TriggerType;
 
-	//THe current state of the event.
+	//The current state of the event.
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
 	EGorgeousEventState_E EventState;
 
@@ -332,6 +343,10 @@ private:
 	//The class that should be used for the classspace against check.
 	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace")
 	TSubclassOf<UGorgeousEvent> ClassspaceParent;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace", Instanced)
+	TArray<UGorgeousSubEvent*> SubEvents;
 	//<------------------------------------------------------------------------->
 
 	

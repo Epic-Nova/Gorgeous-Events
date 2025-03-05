@@ -63,7 +63,7 @@ void UGorgeousEventConstructionInterface::QueueEventConstruction(const TSoftClas
 		return;
 	}
 
-	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Event is already in construction queue.", "GT.Events.Construction.Queue.AlreadyInQueue");
+	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Event is already in construction queue.", "GT.Events.Construction.Queue.Already_In_Queue");
 }
 
 bool UGorgeousEventConstructionInterface::CancelEventConstruction(UGorgeousConstructionHandle* ConstructionToCancel)
@@ -82,10 +82,10 @@ bool UGorgeousEventConstructionInterface::CancelEventConstruction(UGorgeousConst
 
 			return true;
 		}
-		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Event is not registered with the construction queue.", "GT.Events.Construction.Queue.NotInQueue");
+		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Event is not registered with the construction queue.", "GT.Events.Construction.Queue.Not_In_Queue");
 		return false;
 	}
-	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The parsed construction handle is not valid.", "GT.Events.Construction.Queue.InvalidHandle");
+	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The parsed construction handle is not valid.", "GT.Events.Construction.Queue.Invalid_Handle");
 	return false;
 }
 
@@ -149,7 +149,7 @@ bool UGorgeousEventConstructionInterface::RemoveConstructionHandleFromQueueByGui
 		
 		UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Removed construction handle for event: %s with unique identifier: %s from construction queue!"),
 			*Handle->EventClass->GetName(), *EventGuid.ToString()),
-			"GT.Events.Construction.Queue.RemovedHandle", 2.0f, false, true, this);
+			"GT.Events.Construction.Queue.Removed_Handle", 2.0f, false, true, this);
 
 		if (bDeleteHandle)
 		{

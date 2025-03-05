@@ -31,13 +31,16 @@ void AEventOverlapTrigger_A::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OverlapBox->OnComponentBeginOverlap.AddDynamic(this, &AEventOverlapTrigger_A::OnOverlapBegin);
-	OverlapBox->OnComponentEndOverlap.AddDynamic(this, &AEventOverlapTrigger_A::OnOverlapEnd);
+	if (!bTriggerManually)
+	{
+		OverlapBox->OnComponentBeginOverlap.AddDynamic(this, &AEventOverlapTrigger_A::OnOverlapBegin);
+		OverlapBox->OnComponentEndOverlap.AddDynamic(this, &AEventOverlapTrigger_A::OnOverlapEnd);
+	}
 }
 
 void AEventOverlapTrigger_A::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (OverlapBox)
+	if (OverlapBox && !bTriggerManually)
 	{
 		OverlapBox->OnComponentBeginOverlap.RemoveDynamic(this, &AEventOverlapTrigger_A::OnOverlapBegin);
 		OverlapBox->OnComponentEndOverlap.RemoveDynamic(this, &AEventOverlapTrigger_A::OnOverlapEnd);

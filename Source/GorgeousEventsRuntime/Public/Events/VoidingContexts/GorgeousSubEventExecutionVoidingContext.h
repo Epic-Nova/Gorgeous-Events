@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
+﻿// Copyright (c) 2025 Simsalabim Studios (Nils Bergemann). All rights reserved.
 /*==========================================================================>
 |              Gorgeous Events - Events functionality provider              |
 | ------------------------------------------------------------------------- |
@@ -10,4 +10,16 @@
 <==========================================================================*/
 #pragma once
 
+#include "GorgeousEventsRuntimeMinimal.h"
+#include "GorgeousEventVoidingContext.h"
+#include "GorgeousSubEventExecutionVoidingContext.generated.h"
 
+UCLASS()
+class GORGEOUSEVENTSRUNTIME_API UGorgeousSubEventExecutionVoidingContext : public UGorgeousEventVoidingContext
+{
+	GENERATED_BODY()
+
+public:
+
+	virtual void CheckVoidingNeed() override;
+};

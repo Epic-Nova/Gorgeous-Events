@@ -15,6 +15,7 @@
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventManagingInterface.h"
 #include "Interfaces/GorgeousEventStatisticsInterface.h"
+#include "SubEvents/GorgeousSubEvent.h"
 
 void UGorgeousEvent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -131,7 +132,7 @@ void UGorgeousEvent::InvokeInstancedFunctionality()
 	UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
 	
 	UGorgeousEvent* SelfReference;
-	ManagingInterface->TriggerEvent(NewConstructionHandle, SelfReference);
+	ManagingInterface->TriggerEvent_Internal(NewConstructionHandle, SelfReference, this);
 	
 }
 
@@ -144,7 +145,7 @@ UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event
                                   PreviousEventState(EGorgeousEventState_E::Event_State_Invalid), bIsUnique(false),
                                   AgainstCheck(StaticClass()),
                                   bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false),
-                                  bIsEventFinished(false)
+                                  ClassspaceParent(Super::StaticClass() == StaticClass() ? nullptr : Super::StaticClass()), bIsEventFinished(false)
 {}
 
 UGorgeousEvent::~UGorgeousEvent()
@@ -180,8 +181,13 @@ TArray<UGorgeousEvent*> UGorgeousEvent::GetClassspaceChildren() const
 	return Children;
 }
 
+bool UGorgeousEvent::IsSubEventFinished(const UGorgeousSubEvent* SubEvent)
+{
+	return SubEvent->bIsEventFinished;
+}
 
-void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState, float DeltaTime,
+
+void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(const EGorgeousEventState_E CurrentLoopState, float DeltaTime,
                                                             int64 CurrentProcessingLoopCount)
 {
 	switch (CurrentLoopState) {
@@ -207,6 +213,15 @@ void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_
 		break;
 	case EGorgeousEventState_E::Event_State_MAX:
 		break;
+	}
+
+	for (const auto SubEvent : SubEvents)
+	{
+		if (SubEvent->RunOnParentState == CurrentLoopState)
+		{
+			SubEvent->Parent = this;
+			SubEvent->InvokeInstancedFunctionality();
+		}
 	}
 }
 

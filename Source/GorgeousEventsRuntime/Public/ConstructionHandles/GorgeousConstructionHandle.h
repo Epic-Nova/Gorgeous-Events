@@ -145,14 +145,14 @@ private:
 public:
 
 	//The event class that should be constructed by this construction handle
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
 	TSubclassOf<UGorgeousEvent> EventClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
 	TSubclassOf<UGorgeousAssignmentMapper> CorrespondingAssigmentMapper;
 
 	//The unique identifier associated with the constructing event
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = ( ExposeOnSpawn = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = ( ExposeOnSpawn = true))
 	FGuid UniqueEventIdentifier;
 
 protected:

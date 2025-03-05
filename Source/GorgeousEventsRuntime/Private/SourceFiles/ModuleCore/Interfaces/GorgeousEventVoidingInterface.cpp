@@ -44,14 +44,13 @@ void UGorgeousEventVoidingInterface::UnvoidEvent(UGorgeousEvent* EventToUnvoid, 
 	if (VoidedEvents[EventToUnvoid].Key)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(VoidedEvents[EventToUnvoid].Value);
+		UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
 		if (!bRegisterAgain)
 		{
-			UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(EventToUnvoid);
-			EventToUnvoid->GetOuter()->MarkAsGarbage();
+			ManagingInterface->UnregisterEvent(EventToUnvoid);
 		}
 		else
 		{
-			UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();
 			ManagingInterface->ReregisterEvent(EventToUnvoid);
 			
 			const EGorgeousEventState_E PreviousEventState = EventToUnvoid->EventState;

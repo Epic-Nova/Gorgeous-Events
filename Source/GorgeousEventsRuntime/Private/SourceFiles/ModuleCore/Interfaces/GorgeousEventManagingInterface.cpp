@@ -14,7 +14,9 @@
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
+#include "SubEvents/GorgeousSubEvent.h"
 #include "VoidingContexts/GorgeousClassspaceExecutionVoidingContext.h"
+#include "VoidingContexts/GorgeousSubEventExecutionVoidingContext.h"
 
 UGorgeousEventManagingInterface* UGorgeousEventManagingInterface::SingletonInstance = nullptr;
 
@@ -42,14 +44,14 @@ bool UGorgeousEventManagingInterface::RegisterEvent(UGorgeousConstructionHandle*
 bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle,
 	UGorgeousEvent*& RegisteredEvent, UGorgeousEvent* AlreadyInstancedEvent)
 {
-		if (IsValid(ConstructionHandle))
+	if (IsValid(ConstructionHandle))
 	{
 		const TSubclassOf<UGorgeousEvent> EventToRegister = ConstructionHandle->EventClass;
 
 		if (const TObjectPtr<UGorgeousEventConstructionInterface> ConstructionInterface = UGorgeousEventConstructionInterface::GetEventConstructionInterface();
 			ConstructionInterface->IsEventInConstructionQueue(ConstructionHandle->UniqueEventIdentifier))
 		{
-			if (EventToRegister == EventToRegister.GetDefaultObject()->AgainstCheck)
+			if (EventToRegister == (AlreadyInstancedEvent ? AlreadyInstancedEvent->AgainstCheck : EventToRegister.GetDefaultObject()->AgainstCheck))
 			{
 				UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("This class can not be used as an event class, because this is a base class that provides master functionality for children.",
 					"GT.Events.Managing.RegisterEvent.Against_Check");
@@ -63,26 +65,39 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 			
 			for (const auto Event : GetRegisteredEvents())
 			{
-				if (Event->GetClass()->IsChildOf(EventToRegister.GetDefaultObject()->ClassspaceParent))
+				if (Event->GetClass()->IsChildOf(AlreadyInstancedEvent ? AlreadyInstancedEvent->ClassspaceParent : EventToRegister.GetDefaultObject()->ClassspaceParent))
 				{
-					if (EventToRegister.GetDefaultObject()->bUniqueClassspaceExecution)
+					if (AlreadyInstancedEvent ? AlreadyInstancedEvent->bUniqueClassspaceExecution : EventToRegister.GetDefaultObject()->bUniqueClassspaceExecution)
 					{
 						bIsExecutionAllowed = false;
 						break;
 					}
 					IncomingParent = Event;
+					break;
+				}
+
+				if (AlreadyInstancedEvent)
+				{
+					for (const auto SubEvent : Event->SubEvents)
+					{
+						if (SubEvent == AlreadyInstancedEvent)
+						{
+							IncomingParent = Event;
+							break;
+						}
+					}
 				}
 			}
 
 			if (!bIsExecutionAllowed)
 			{
 				UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The Execution of the Event is currently not allowed, this could be because another Event in the same Class-space is currently performing its execution.",
-					"GT.Events.Managing.RegisterEvent.ExecutionNotAllowed");
+					"GT.Events.Managing.RegisterEvent.Execution_Not_Allowed");
 				ConstructionInterface->RemoveConstructionHandleFromQueue(ConstructionHandle, true);
 				return false;
 			}
 
-			if (EventToRegister.GetDefaultObject()->bIsUnique && IsEventOfClassRegistered(EventToRegister))
+			if (AlreadyInstancedEvent ? AlreadyInstancedEvent->bIsUnique : EventToRegister.GetDefaultObject()->bIsUnique && IsEventOfClassRegistered(EventToRegister))
 			{
 				UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The event cannot be registered because it was marked as unique and another instance of the same class is already active.",
 					"GT.Events.Managing.RegisterEvent.Unique");
@@ -92,7 +107,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 
 
 			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The evaluation of whether the event can be registered has been successfully completed. An attempt is now made to register the event and put it into active status.",
-				"GT.Events.Managing.RegisterEvent.EvaluationCompleted");
+				"GT.Events.Managing.RegisterEvent.Evaluation_Completed");
 
 			const TObjectPtr<UGorgeousEvent> NewEvent = AlreadyInstancedEvent ? AlreadyInstancedEvent : NewObject<UGorgeousEvent>(ConstructionHandle, EventToRegister);
 			NewEvent->UniqueIdentifier = ConstructionHandle->UniqueEventIdentifier;
@@ -100,7 +115,7 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 			// Sets this event interface as the cached owner. This is a fallback for when the outer reference is lost because of any reason I can not imagine (Absolute failsafe)
 			NewEvent->CachedOwner = this;
 
-			//Makes the event eligible for Runtime Object Variables and the Construction Object Variables
+			//Makes the event eligible for Runtime Object Variables
 			IncomingParent ? IncomingParent->RegisterWithRegistry(NewEvent) : UGorgeousRootObjectVariable::GetRootObjectVariable()->RegisterWithRegistry(NewEvent);
 			
 			ConstructionHandle->OnConstructionStartedDelegate.Broadcast(NewEvent);
@@ -124,10 +139,10 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 			return ConstructionInterface->RemoveConstructionHandleFromQueue(ConstructionHandle);
 		}
 
-		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The Event is not registered in the construction queue, therefore it cannot be constructed.","GT.Events.Construction.Queue.NotInQueue");
+		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The Event is not registered in the construction queue, therefore it cannot be constructed.","GT.Events.Construction.Queue.Not_In_Queue");
 		return false;
 	}
-	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Construction Handle reference is not valid, aborting Event registration.","GT.Events.Construction.Queue.InvalidHandle");
+	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("Construction Handle reference is not valid, aborting Event registration.","GT.Events.Construction.Queue.Invalid_Handle");
 	return false;
 }
 
@@ -146,28 +161,62 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 			if (Pair.Key == EventToUnregister)
 			{
 				GetWorld()->GetTimerManager().ClearTimer(Pair.Value);
+
+				UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
+				bool bVoidedInstead = false;
+				
 				if (EventToUnregister->GetClassspaceChildren().Num() > 0)
 				{
-					UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
 					VoidingInterface->VoidEvent(EventToUnregister, UGorgeousClassspaceExecutionVoidingContext::StaticClass());
+					bVoidedInstead = true;
+					
+					UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
+						"GT.Events.Managing.UnregisterEvent.Voided_Instead");
+				}
 
+				if (!VoidingInterface->IsEventVoided(EventToUnregister))
+				{
+					bool bAllSubEventsCompleted = false;
+					for (const auto SubEvent : EventToUnregister->SubEvents)
+					{
+						if (EventToUnregister->IsSubEventFinished(SubEvent))
+						{
+							bAllSubEventsCompleted = true;
+						}
+						else
+						{
+							bAllSubEventsCompleted = false;
+							break;
+						}
+					}
+
+					if (!bAllSubEventsCompleted)
+					{
+						VoidingInterface->VoidEvent(EventToUnregister, UGorgeousSubEventExecutionVoidingContext::StaticClass());
+						bVoidedInstead = true;
+						
+						UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister has currently sub events performing their execution. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
+							"GT.Events.Managing.UnregisterEvent.Voided_Instead");
+					}
+				}
+				
+				if (bVoidedInstead)
+				{
 					const EGorgeousEventState_E PreviousEventState = EventToUnregister->EventState;
 					EventToUnregister->EventState = EGorgeousEventState_E::Event_State_Voided;
 					EventToUnregister->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToUnregister->EventState);
 					EventToUnregister->OnEventVoidedDelegate.Broadcast();
-					
-					UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
-						"GT.Events.Managing.UnregisterEvent.Voided_Instead");
 
 					return true;
 				}
+				
 				UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(Pair.Key);
 				EventToUnregister->GetOuter()->MarkAsGarbage();
 				return RemoveUnregisteredEvent(EventToUnregister);
 			}
 		}
 	}
-	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The requested event is not registered, aborting unregistration!","GT.Events.Managing.RegisterEvent.NotRegistered");
+	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The requested event is not registered, aborting unregistration!","GT.Events.Managing.RegisterEvent.Not_Registered");
 	return false;
 }
 
@@ -189,7 +238,13 @@ bool UGorgeousEventManagingInterface::CancelEvent(UGorgeousEvent* EventToCancel)
 
 bool UGorgeousEventManagingInterface::TriggerEvent(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& TriggeredEvent)
 {
-	if (UGorgeousEvent* RegisteredEvent; RegisterEvent(ConstructionHandle, RegisteredEvent))
+	return TriggerEvent_Internal(ConstructionHandle, TriggeredEvent);
+}
+
+bool UGorgeousEventManagingInterface::TriggerEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle,
+	UGorgeousEvent*& TriggeredEvent, UGorgeousEvent* AlreadyInstancedEvent)
+{
+	if (UGorgeousEvent* RegisteredEvent; RegisterEvent_Internal(ConstructionHandle, RegisteredEvent, AlreadyInstancedEvent))
 	{
 		RegisteredEvent->OnEventTriggeredDelegate.Broadcast();
 
@@ -274,7 +329,7 @@ void UGorgeousEventManagingInterface::LoadEventNative(TSoftClassPtr<UGorgeousEve
     if (EventToLoad.IsValid())
     {
         UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Starting async load for event: %s"), *EventToLoad.ToString()), Logging_Information,
-            "GT.Events.Managing.LoadEvent.StartAsync", 2.0f, true, true, false, this);
+            "GT.Events.Managing.LoadEvent.Start_Async", 2.0f, true, true, false, this);
     	
         FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
         StreamableManager.RequestAsyncLoad(EventToLoad.ToSoftObjectPath(), FStreamableDelegate::CreateLambda([&, EventToLoad, OnEventLoaded]()

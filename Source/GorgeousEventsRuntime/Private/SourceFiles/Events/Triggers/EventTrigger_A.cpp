@@ -30,10 +30,20 @@ void AEventTrigger_A::TriggerEvent()
 	ConstructionInterface->QueueEventConstruction(EventToTrigger, FGuid::NewGuid(), ConstructionQueued);
 }
 
+void AEventTrigger_A::AssignConstructionEventVariables_Implementation(UGorgeousConstructionHandle* ConstructionHandle)
+{
+	if (!ConstructionHandle->EventClass.GetDefaultObject()->bIsDebuggingMode)
+		return;
+	
+	UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage(FString::Printf(TEXT("Default implementation of AssignConstructionEventVariables called, no action is performed!")),
+		ConstructionHandle->EventClass.GetDefaultObject()->EventLoggingKey.ToString());
+}
+
 void AEventTrigger_A::OnEventConstructionQueued(UGorgeousConstructionHandle* ConstructionHandle)
 {
 	UObject* TriggerReference = this;
-	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "Instigator", TriggerReference);
+	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "EventInstigator", TriggerReference);
+	AssignConstructionEventVariables(ConstructionHandle);
 	
 	if (ConstructionHandle->EventClass.GetDefaultObject()->TriggerType == TriggerType)
 	{

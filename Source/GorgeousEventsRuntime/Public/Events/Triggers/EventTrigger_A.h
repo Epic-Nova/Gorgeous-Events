@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events")
 	void TriggerEvent();
 
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Gorgeous Events")
+	void AssignConstructionEventVariables(UGorgeousConstructionHandle* ConstructionHandle);
+
 protected:
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")

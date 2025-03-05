@@ -15,7 +15,7 @@
 
 class AEventTrigger_A;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class GORGEOUSEVENTSRUNTIME_API UGorgeousAssignmentMapper : public UObject,
 	public IGorgeousSingleObjectVariablesSetter_I,
 	public IGorgeousArrayObjectVariablesSetter_I,

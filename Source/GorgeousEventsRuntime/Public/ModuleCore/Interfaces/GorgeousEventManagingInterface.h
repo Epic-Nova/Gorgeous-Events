@@ -74,5 +74,6 @@ private:
 	TMap<TObjectPtr<UGorgeousEvent>, FTimerHandle> CurrentRegisteredEvents;
 
 	bool RegisterEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& RegisteredEvent, UGorgeousEvent* AlreadyInstancedEvent = nullptr);
+	bool TriggerEvent_Internal(UGorgeousConstructionHandle* ConstructionHandle, UGorgeousEvent*& TriggeredEvent, UGorgeousEvent* AlreadyInstancedEvent = nullptr);
 	
 };
