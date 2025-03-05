@@ -81,7 +81,7 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousEventCleanup);
 <---------------------------=== TODOs & Notes ===--------------------------->
 <--------------------------------------------------------------------------->
 <==========================================================================*/
-UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Event", Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
+UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
 	meta = (ToolTip = "The base class for all Gorgeous Events.", ShortTooltip = "Gorgeous Event", ExposedAsyncProxy = GorgeousEventAsyncAction))
 class UGorgeousEvent : public UGorgeousObjectVariable
 {
@@ -299,7 +299,7 @@ protected:
 	//The logging key that should be used for logging entries specific to this event.
 	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Logging")
 	FGameplayTag EventLoggingKey;
-
+	
 private:
 	
 	//The seconds to wait for the switch from the triggered state to the started state of the event.
@@ -345,8 +345,6 @@ private:
 	TSubclassOf<UGorgeousEvent> ClassspaceParent;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events|Classspace", Instanced)
-	TArray<UGorgeousSubEvent*> SubEvents;
 	//<------------------------------------------------------------------------->
 
 	

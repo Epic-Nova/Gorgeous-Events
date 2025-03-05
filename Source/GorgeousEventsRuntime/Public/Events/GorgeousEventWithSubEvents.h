@@ -8,29 +8,22 @@
 |                   Epic Nova is an independent entity,                     |
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
-
-#include "VoidingContexts/GorgeousSubEventExecutionVoidingContext.h"
+#pragma once
 #include "GorgeousEvent.h"
-#include "GorgeousEventWithSubEvents.h"
+#include "GorgeousEventWIthSubEvents.generated.h"
 
-void UGorgeousSubEventExecutionVoidingContext::CheckVoidingNeed()
+UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", Experimental, NotPlaceable,
+	meta = (ToolTip = "The base class for all Gorgeous Events with Sub Events."))
+class UGorgeousEventWithSubEvents : public UGorgeousEvent
 {
-	bool bAllSubEventsCompleted = false;
-	for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(VoidedEvent)->SubEvents)
-	{
-		if (VoidedEvent->IsSubEventFinished(SubEvent))
-		{
-			bAllSubEventsCompleted = true;
-		}
-		else
-		{
-			bAllSubEventsCompleted = false;
-			break;
-		}
-	}
+	GENERATED_BODY()
 
-	if (bAllSubEventsCompleted)
-	{
-		InvalidateVoiding(false);
-	}
-}
+public:
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Gorgeous Events", Instanced)
+	TArray<UGorgeousSubEvent*> SubEvents;
+
+protected:
+
+	virtual void ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState, float DeltaTime, int64 CurrentProcessingLoopCount) override;
+};

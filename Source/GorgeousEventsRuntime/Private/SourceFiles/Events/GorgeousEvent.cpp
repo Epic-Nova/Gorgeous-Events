@@ -144,8 +144,7 @@ UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event
                                   SecondsToWait(0.1), EventTimeout(120), CurrentProcessingLoopDelay(1),
                                   PreviousEventState(EGorgeousEventState_E::Event_State_Invalid), bIsUnique(false),
                                   AgainstCheck(StaticClass()),
-                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false),
-                                  ClassspaceParent(Super::StaticClass() == StaticClass() ? nullptr : Super::StaticClass()), bIsEventFinished(false)
+                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false), bIsEventFinished(false)
 {}
 
 UGorgeousEvent::~UGorgeousEvent()
@@ -213,15 +212,6 @@ void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(const EGorgeousEvent
 		break;
 	case EGorgeousEventState_E::Event_State_MAX:
 		break;
-	}
-
-	for (const auto SubEvent : SubEvents)
-	{
-		if (SubEvent->RunOnParentState == CurrentLoopState)
-		{
-			SubEvent->Parent = this;
-			SubEvent->InvokeInstancedFunctionality();
-		}
 	}
 }
 

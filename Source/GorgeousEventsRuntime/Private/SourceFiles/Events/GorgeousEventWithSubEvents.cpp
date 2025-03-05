@@ -8,29 +8,21 @@
 |                   Epic Nova is an independent entity,                     |
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
-
-#include "VoidingContexts/GorgeousSubEventExecutionVoidingContext.h"
-#include "GorgeousEvent.h"
 #include "GorgeousEventWithSubEvents.h"
+#include "SubEvents/GorgeousSubEvent.h"
 
-void UGorgeousSubEventExecutionVoidingContext::CheckVoidingNeed()
+void UGorgeousEventWithSubEvents::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState,
+                                                                         float DeltaTime, int64 CurrentProcessingLoopCount)
 {
-	bool bAllSubEventsCompleted = false;
-	for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(VoidedEvent)->SubEvents)
-	{
-		if (VoidedEvent->IsSubEventFinished(SubEvent))
-		{
-			bAllSubEventsCompleted = true;
-		}
-		else
-		{
-			bAllSubEventsCompleted = false;
-			break;
-		}
-	}
+	Super::ContinuousEventProcessingLoop_Internal(CurrentLoopState, DeltaTime, CurrentProcessingLoopCount);
 
-	if (bAllSubEventsCompleted)
+	for (const auto SubEvent : SubEvents)
 	{
-		InvalidateVoiding(false);
+		if (SubEvent->RunOnParentState == CurrentLoopState)
+		{
+			SubEvent->SetParent(this);
+			SubEvent->CallingEvent = this;
+			SubEvent->InvokeInstancedFunctionality();
+		}
 	}
 }

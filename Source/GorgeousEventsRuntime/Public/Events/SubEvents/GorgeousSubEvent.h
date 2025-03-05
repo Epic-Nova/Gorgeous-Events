@@ -12,18 +12,18 @@
 
 #include "GorgeousSubEvent.generated.h"
 
-UCLASS(Abstract, Blueprintable, BlueprintType, DisplayName = "Gorgeous Sub Event", Category = "Gorgeous Events|Sub Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
+UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events|Sub Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable,
 	meta = (ToolTip = "The base class for all Gorgeous Sub Events."))
 class UGorgeousSubEvent : public UGorgeousEvent
 {
 	GENERATED_BODY()
-
+	
 	friend class UGorgeousEvent;
 
 public:
 
 	//The state that the executing event needs for this event to be kicked off.
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gorgeous Events")
 	EGorgeousEventState_E RunOnParentState;
 };
 

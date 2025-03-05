@@ -11,6 +11,7 @@
 #include "Interfaces/GorgeousEventManagingInterface.h"
 #include "GorgeousEvent.h"
 #include "GorgeousEvents_GIS.h"
+#include "GorgeousEventWithSubEvents.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
@@ -76,9 +77,9 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 					break;
 				}
 
-				if (AlreadyInstancedEvent)
+				if (AlreadyInstancedEvent && Event->IsA<UGorgeousEventWithSubEvents>())
 				{
-					for (const auto SubEvent : Event->SubEvents)
+					for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(Event)->SubEvents)
 					{
 						if (SubEvent == AlreadyInstancedEvent)
 						{
@@ -175,10 +176,10 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 						"GT.Events.Managing.UnregisterEvent.Voided_Instead");
 				}
 
-				if (!VoidingInterface->IsEventVoided(EventToUnregister))
+				if (!VoidingInterface->IsEventVoided(EventToUnregister) && EventToUnregister->IsA<UGorgeousEventVoidingInterface>())
 				{
 					bool bAllSubEventsCompleted = false;
-					for (const auto SubEvent : EventToUnregister->SubEvents)
+					for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->SubEvents)
 					{
 						if (EventToUnregister->IsSubEventFinished(SubEvent))
 						{
