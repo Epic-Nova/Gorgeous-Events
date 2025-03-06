@@ -14,9 +14,7 @@
 
 UGorgeousEventVoidingInterface* UGorgeousEventVoidingInterface::GetEventVoidingInterface()
 {
-	//@TODO: Probably problematic for Dedicated server scenarios
-	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
-	return Cast<UGorgeousEventVoidingInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+	return Cast<UGorgeousEventVoidingInterface>(UGorgeousEvents_GIS::StaticEventsGISInstance->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
 
 bool UGorgeousEventVoidingInterface::VoidEvent(UGorgeousEvent* EventToVoid, const TSubclassOf<UGorgeousEventVoidingContext> VoidingContext)
@@ -65,6 +63,8 @@ void UGorgeousEventVoidingInterface::UnvoidEvent(UGorgeousEvent* EventToUnvoid, 
 
 bool UGorgeousEventVoidingInterface::IsEventVoided(UGorgeousEvent* EventToCheck)
 {
+	if (!EventToCheck || !VoidedEvents.Contains(EventToCheck))
+		return false;
 	return VoidedEvents[EventToCheck].Key != nullptr;
 }
 

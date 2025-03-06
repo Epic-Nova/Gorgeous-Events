@@ -23,9 +23,7 @@ UGorgeousEventManagingInterface* UGorgeousEventManagingInterface::SingletonInsta
 
 UGorgeousEventManagingInterface* UGorgeousEventManagingInterface::GetEventManagingInterface()
 {
-	//@TODO: Probably problematic for Dedicated server scenarios
-	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
-	return Cast<UGorgeousEventManagingInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+	return Cast<UGorgeousEventManagingInterface>(UGorgeousEvents_GIS::StaticEventsGISInstance->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
 
 void UGorgeousEventManagingInterface::LoadEvent(const TSoftClassPtr<UGorgeousEvent> EventToLoad,

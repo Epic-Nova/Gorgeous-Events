@@ -14,9 +14,7 @@
 
 UGorgeousEventStatisticsInterface* UGorgeousEventStatisticsInterface::GetEventStatisticsInterface()
 {
-	//@TODO: Probably problematic for Dedicated server scenarios
-	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
-	return Cast<UGorgeousEventStatisticsInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+	return Cast<UGorgeousEventStatisticsInterface>(UGorgeousEvents_GIS::StaticEventsGISInstance->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
 
 void UGorgeousEventStatisticsInterface::AddEventToStatistics(UGorgeousEvent* EventToAdd)

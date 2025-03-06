@@ -10,6 +10,8 @@
 <==========================================================================*/
 #include "GorgeousEvents_GIS.h"
 
+TObjectPtr<UGorgeousEvents_GIS> UGorgeousEvents_GIS::StaticEventsGISInstance = nullptr;
+
 void UGorgeousEvents_GIS::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -18,6 +20,8 @@ void UGorgeousEvents_GIS::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		RegisterEventInterface(InterfacePair.Key, nullptr);
 	}
+
+	StaticEventsGISInstance = this;
 }
 
 UGorgeousEvents_GIS::UGorgeousEvents_GIS()

@@ -17,9 +17,7 @@ UGorgeousEventConstructionInterface* UGorgeousEventConstructionInterface::Single
 
 UGorgeousEventConstructionInterface* UGorgeousEventConstructionInterface::GetEventConstructionInterface()
 {
-	//@TODO: Probably problematic for Dedicated server scenarios
-	UGorgeousEvents_GIS* Events_GIS = GEngine->GameViewport->GetWorld()->GetGameInstance()->GetSubsystem<UGorgeousEvents_GIS>();
-	return Cast<UGorgeousEventConstructionInterface>(Events_GIS->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
+	return Cast<UGorgeousEventConstructionInterface>(UGorgeousEvents_GIS::StaticEventsGISInstance->GetRegisteredEventsInterfaceForSubclass(StaticClass()));
 }
 
 void UGorgeousEventConstructionInterface::QueueEventConstruction(const TSoftClassPtr<UGorgeousEvent> EventToConstruct, FGuid UniqueEventIdentifierOverride, const FOnEventConstructionQueued& OnEventConstructionQueued)

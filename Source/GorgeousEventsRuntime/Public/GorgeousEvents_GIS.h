@@ -65,6 +65,8 @@ public:
 
 	//Override for when the subsystem is initialized.
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	static TObjectPtr<UGorgeousEvents_GIS> StaticEventsGISInstance;
 	
 protected:
 	

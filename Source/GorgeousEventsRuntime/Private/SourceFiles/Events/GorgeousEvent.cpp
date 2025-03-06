@@ -295,6 +295,7 @@ void UGorgeousEvent::OnEventVoided_Internal()
 
 void UGorgeousEvent::OnEventCleanup_Internal()
 {
+	CallingEvent = nullptr;
 }
 
 void UGorgeousEvent::SwitchToStartedState_Internal()
