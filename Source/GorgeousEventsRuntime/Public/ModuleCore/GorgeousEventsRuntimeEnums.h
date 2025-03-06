@@ -44,7 +44,6 @@ UENUM(BlueprintType, DisplayName = "Skip Type", meta = (ShortTooltip = "Weather 
 enum class EGorgeousEventSkipType_E : uint8
 {
 	Event_Skip_Skippable = 0 UMETA(DisplayName = "Skippable", ToolTip = "The player can skip this event type at any given time. Optionally a handling function/callback can be bound to define the behaviour when doing so."),
-	Event_Skip_Partial_Skippable = 1 UMETA(DisplayName = "Partial Skippable", ToolTip = "The player can skip this event type partially. Mostly to the next section of the event or a custom defined one. Optionally a handling function/callback can be bound to define the behaviour when doing so."),
 	Event_Skip_Not_Skippable = 2 UMETA(DisplayName = "Not Skippable", ToolTip = "The player can't skip the event no matter what."),
 	Event_Skip_Cond_Skippable = 3 UMETA(DisplayName = "Conditional Skippable", ToolTip = "The player can skip the event under the default condition that it already has been played at some point in the corresponding save game. Alternatively a different condition to skip this event can be given."),
 	Event_Skip_MAX = 4 UMETA(Hidden)

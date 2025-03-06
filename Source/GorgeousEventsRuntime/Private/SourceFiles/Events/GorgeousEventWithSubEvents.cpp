@@ -9,7 +9,7 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "GorgeousEventWithSubEvents.h"
-#include "SubEvents/GorgeousSubEvent.h"
+#include "GorgeousSubEvent.h"
 
 void UGorgeousEventWithSubEvents::ContinuousEventProcessingLoop_Internal(EGorgeousEventState_E CurrentLoopState,
                                                                          float DeltaTime, int64 CurrentProcessingLoopCount)

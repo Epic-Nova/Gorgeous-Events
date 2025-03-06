@@ -25,7 +25,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventConstructionInterface : public UGo
 	
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction", meta = (CompactNodeTitle = "Gorgeous Event Construction"))
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Construction", meta = (CompactNodeTitle = "Event Construction"))
 	static UGorgeousEventConstructionInterface* GetEventConstructionInterface();
 
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Construction")

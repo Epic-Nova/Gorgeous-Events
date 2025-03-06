@@ -29,7 +29,7 @@ UGorgeousEvents_GIS::UGorgeousEvents_GIS()
 	//Default Event Interfaces
 	EventInterfaces = TMap<TSubclassOf<UGorgeousEventInterface>, TSubclassOf<UGorgeousEventInterface>>
 	{
-		{UGorgeousEventActionQueueInterface::StaticClass(), UGorgeousEventActionQueueInterface::StaticClass()},
+		{UGorgeousEventActionsInterface::StaticClass(), UGorgeousEventActionsInterface::StaticClass()},
 		{UGorgeousEventConstructionInterface::StaticClass(), UGorgeousEventConstructionInterface::StaticClass()},
 		{UGorgeousEventFreezingInterface::StaticClass(), UGorgeousEventFreezingInterface::StaticClass()},
 		{UGorgeousEventLockingInterface::StaticClass(), UGorgeousEventLockingInterface::StaticClass()},

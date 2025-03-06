@@ -17,7 +17,7 @@
 //<-------------------------=== Module Includes ===-------------------------->
 #include "GorgeousEventsRuntimeMinimal.h"
 #include "GorgeousEvent.h"
-#include "Interfaces/GorgeousEventActionQueueInterface.h"
+#include "Interfaces/GorgeousEventActionsInterface.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventFreezingInterface.h"
 #include "Interfaces/GorgeousEventLockingInterface.h"

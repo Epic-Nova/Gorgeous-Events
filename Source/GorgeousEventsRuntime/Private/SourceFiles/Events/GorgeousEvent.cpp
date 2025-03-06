@@ -15,7 +15,7 @@
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventManagingInterface.h"
 #include "Interfaces/GorgeousEventStatisticsInterface.h"
-#include "SubEvents/GorgeousSubEvent.h"
+#include "GorgeousSubEvent.h"
 
 void UGorgeousEvent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {

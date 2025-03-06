@@ -23,8 +23,9 @@
 
 //<===========--- Forward Declarations ---===========>
 class UGorgeousConstructionHandle;
-class AEventTrigger_A;
+class UGorgeousEventAction;
 class UGorgeousSubEvent;
+class AEventTrigger_A;
 //<-------------------------------------------------->
 
 //<=================--- Delegates ---=================>
@@ -89,8 +90,10 @@ class UGorgeousEvent : public UGorgeousObjectVariable
 
 	//<================--- Friend Classes ---================>
 	friend class UGorgeousEventManagingInterface;
-	friend class UGorgeousAssignmentMapper;
 	friend class UGorgeousConstructionHandle;
+	friend class UGorgeousAssignmentMapper;
+	friend class UGorgeousEventActionsInterface;
+	friend class UGorgeousEventAction;
 	friend class AEventTrigger_A;
 	friend class UGorgeousSubEventExecutionVoidingContext;
 	//<------------------------------------------------------>
@@ -180,6 +183,14 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Sub Events")
 	bool IsSubEventFinished(const UGorgeousSubEvent* SubEvent);
+
+
+	/**
+	 * Returns the current registered event actions.
+	 * @return All current instanced event actions for this event.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Actions")
+	TArray<UGorgeousEventAction*> GetActions() const { return RegisteredEventActions; };
 	
 protected:
 	
@@ -194,7 +205,7 @@ protected:
 	void ContinuousEventProcessingLoop(EGorgeousEventState_E CurrentLoopState, float DeltaTime, int64 CurrentProcessingLoopCount);
 
 	/**
-	 * @brief Called when this event state changes.
+	 * @brief Called when the event state changes.
 	 */
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "On State Changed", Category = "Gorgeous Events|Event Callbacks")
 	void OnEventStateChanged(EGorgeousEventState_E OldEventState, EGorgeousEventState_E NewEventState);
@@ -277,6 +288,11 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events|Calling Event")
 	UGorgeousEvent* CallingEvent;
 
+	
+	//The actions that are performed by this event
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gorgeous Events|Actions")
+	TMap<FName, TSubclassOf<UGorgeousEventAction>> Actions;
+	
 
 	//Weather this event should be in the debugging mode to provide more infos that usual.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gorgeous Events|Debugging")
@@ -412,6 +428,9 @@ private:
 
 	//The timer handle to the event timeout. Only valid if the event timeout variable is set.
 	FTimerHandle EventTimeoutTimerHandle;
+
+	//The current registered event actions that are instanced at the moment.
+	TArray<TObjectPtr<UGorgeousEventAction>> RegisteredEventActions;
 
 
 	

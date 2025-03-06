@@ -27,7 +27,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventManagingInterface : public UGorgeo
 	
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Managing", meta = (CompactNodeTitle = "Gorgeous Event Management"))
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Managing", meta = (CompactNodeTitle = "Event Management"))
 	static UGorgeousEventManagingInterface* GetEventManagingInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Managing")

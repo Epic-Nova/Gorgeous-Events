@@ -39,7 +39,7 @@
 #include "Events/VoidingContexts/GorgeousClassspaceExecutionVoidingContext.h"
 #include "Events/VoidingContexts/GorgeousSubEventExecutionVoidingContext.h"
 
-#include "Interfaces/GorgeousEventActionQueueInterface.h"
+#include "Interfaces/GorgeousEventActionsInterface.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventFreezingInterface.h"
 #include "Interfaces/GorgeousEventLockingInterface.h"

@@ -21,7 +21,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventStatisticsInterface : public UGorg
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Statistics", meta = (CompactNodeTitle = "Gorgeous Event Statistics"))
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Statistics", meta = (CompactNodeTitle = "Event Statistics"))
 	static UGorgeousEventStatisticsInterface* GetEventStatisticsInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Statistics")

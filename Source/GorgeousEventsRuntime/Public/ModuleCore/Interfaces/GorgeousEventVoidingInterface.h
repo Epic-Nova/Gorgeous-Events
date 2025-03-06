@@ -22,7 +22,7 @@ class GORGEOUSEVENTSRUNTIME_API UGorgeousEventVoidingInterface : public UGorgeou
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding", meta = (CompactNodeTitle = "Gorgeous Event Voiding"))
+	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Voiding", meta = (CompactNodeTitle = "Event Voiding"))
 	static UGorgeousEventVoidingInterface* GetEventVoidingInterface();
 	
 	UFUNCTION(BlueprintCallable, Category = "Gorgeous Events|Voiding")

@@ -15,7 +15,7 @@
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
-#include "SubEvents/GorgeousSubEvent.h"
+#include "GorgeousSubEvent.h"
 #include "VoidingContexts/GorgeousClassspaceExecutionVoidingContext.h"
 #include "VoidingContexts/GorgeousSubEventExecutionVoidingContext.h"
 
@@ -195,7 +195,7 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 						VoidingInterface->VoidEvent(EventToUnregister, UGorgeousSubEventExecutionVoidingContext::StaticClass());
 						bVoidedInstead = true;
 						
-						UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister has currently sub events performing their execution. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
+						UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister has currently sub events performing their execution. It got moved into the voiding system instead where it will idle until all sub-events are finished with execution.",
 							"GT.Events.Managing.UnregisterEvent.Voided_Instead");
 					}
 				}
