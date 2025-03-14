@@ -22,7 +22,7 @@ void UGorgeousEventWithSubEvents::ContinuousEventProcessingLoop_Internal(EGorgeo
 		{
 			SubEvent->SetParent(this);
 			SubEvent->CallingEvent = this;
-			SubEvent->InvokeInstancedFunctionality();
+			SubEvent->InvokeInstancedFunctionality(FGuid::NewGuid());
 		}
 	}
 }

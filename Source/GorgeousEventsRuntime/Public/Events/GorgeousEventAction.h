@@ -18,9 +18,9 @@ DECLARE_MULTICAST_DELEGATE(FOnEventActionStarted);
 DECLARE_MULTICAST_DELEGATE(FOnEventActionCompleted);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEventActionTick, float, int64);
 
-UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events|Actions", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable,
+UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events|Actions", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental,
 	meta = (ToolTip = "The base class for all Gorgeous Sub Events."))
-class UGorgeousEventAction : public UObject
+class UGorgeousEventAction final : public UObject
 {
 	GENERATED_BODY()
 
@@ -48,9 +48,10 @@ public:
 	/**
 	 * @brief Called when the SkipType is Conditional Skippable to determine if the event is skipable with custom conditioning.
 	 * @return true if the event is skippable, false otherwise
+	 * @TODO: Default: The player can skip the event under the default condition that it already has been played at some point in the corresponding save game.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Actions")
-	virtual bool IsEventActionSkippable();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintPure, Category = "Gorgeous Events|Actions")
+	bool IsEventActionSkippable();
 
 	/**
 	 * @brief Calls CompleteAction on the Event Action Interface to mark the execution of this event action als completed.
@@ -70,7 +71,7 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "On Aciton Completed", Category = "Gorgeous Events|Actions|Action Callbacks")
 	void OnEventActionCompleted();
-
+  
 	/**
 	 * @brief Called when action ticks, this forwards the Current Processing Loop from the event up to the aciton.
 	 */

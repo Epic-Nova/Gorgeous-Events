@@ -43,12 +43,6 @@ UGorgeousEventAction::UGorgeousEventAction(): SkipType(EGorgeousEventSkipType_E:
 
 UGorgeousEventAction::~UGorgeousEventAction() {}
 
-bool UGorgeousEventAction::IsEventActionSkippable()
-{
-	//@TODO: Default: The player can skip the event under the default condition that it already has been played at some point in the corresponding save game.
-	return false;
-}
-
 void UGorgeousEventAction::CompleteAction() const
 {
 	UGorgeousEventActionsInterface* ActionsInterface = UGorgeousEventActionsInterface::GetEventActionsInterface();

@@ -21,8 +21,8 @@ UENUM(BlueprintType, DisplayName = "Event State", meta = (ShortTooltip = "The st
 enum class EGorgeousEventState_E : uint8
 {
 	Event_State_Invalid = 0 UMETA(DisplayName = "Invalid", ToolTip = "The event is in an invalid state."),
-	Event_State_Triggered = 1 UMETA(DisplayName = "Triggered", ToolTip = "The event has been triggered and is ready to be initialized."),
-	Event_State_Initialized = 2 UMETA(DisplayName = "Initialized", ToolTip = "The event is initialized and ready to be processed."),
+	Event_State_Initialized = 1 UMETA(DisplayName = "Initialized", ToolTip = "The event is initialized and ready to be processed."),
+	Event_State_Triggered = 2 UMETA(DisplayName = "Triggered", ToolTip = "The event has been triggered and is ready to be initialized."),
 	Event_State_Started = 3 UMETA(DisplayName = "Started", ToolTip = "The event has been started and is currently running."),
 	Event_State_Processing = 4 UMETA(DisplayName = "Processing", ToolTip = "The event is currently being processed."),
 	Event_State_Finished = 5 UMETA(DisplayName = "Finished", ToolTip = "The event has been processed and is finished."),

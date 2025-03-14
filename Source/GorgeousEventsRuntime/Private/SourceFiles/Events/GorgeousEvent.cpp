@@ -38,17 +38,18 @@ void UGorgeousEvent::PostInitProperties()
 		ContinuousEventProcessingLoop(CurrentLoopState, DeltaTime, CurrentProcessingLoopCount);
 	});
 
+	OnEventInitializedDelegate.AddLambda([this]()
+	{
+		OnEventInitialized_Internal();
+		OnEventInitialized();
+	});
+	
 	OnEventTriggeredDelegate.AddLambda([this]()
 	{
 		OnEventTriggered_Internal();
 		OnEventTriggered();
 	});
 
-	OnEventInitializedDelegate.AddLambda([this]()
-	{
-		OnEventInitialized_Internal();
-		OnEventInitialized();
-	});
 
 	OnEventStartedDelegate.AddLambda([this]()
 	{
@@ -117,11 +118,11 @@ void UGorgeousEvent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 	}
 }
 
-void UGorgeousEvent::InvokeInstancedFunctionality()
+void UGorgeousEvent::InvokeInstancedFunctionality(const FGuid NewUniqueIdentifier)
 {
 	UGorgeousConstructionHandle* NewConstructionHandle = NewObject<UGorgeousConstructionHandle>(UGorgeousEventConstructionInterface::GetEventConstructionInterface(), ConstructionHandleClass);
 	NewConstructionHandle->EventClass = GetClass();
-	NewConstructionHandle->UniqueEventIdentifier = FGuid::NewGuid();
+	NewConstructionHandle->UniqueEventIdentifier = NewUniqueIdentifier;
 	Rename(*GetName(), NewConstructionHandle);
 
 	UGorgeousEventConstructionInterface* ConstructionInterface = UGorgeousEventConstructionInterface::GetEventConstructionInterface();

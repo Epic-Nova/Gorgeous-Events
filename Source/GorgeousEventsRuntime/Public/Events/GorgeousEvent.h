@@ -111,8 +111,8 @@ public:
 	// Used to change the values of properties to comply with the edit condition meta tags
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-	// Functionality for when the event is already instanced from e.g. ConditionalObjectChooser to instanciate this event
-	virtual void InvokeInstancedFunctionality() override;
+	// Functionality for when the event is already instanced from e.g. ConditionalObjectChooser to instantiate this event
+	virtual void InvokeInstancedFunctionality(const FGuid NewUniqueIdentifier) override;
 	
 protected:
 
