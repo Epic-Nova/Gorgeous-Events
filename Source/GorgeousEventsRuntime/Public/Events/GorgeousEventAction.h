@@ -50,7 +50,7 @@ public:
 	 * @return true if the event is skippable, false otherwise
 	 * @TODO: Default: The player can skip the event under the default condition that it already has been played at some point in the corresponding save game.
 	 */
-	UFUNCTION(BlueprintImplementableEvent, BlueprintPure, Category = "Gorgeous Events|Actions")
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "Gorgeous Events|Actions")
 	bool IsEventActionSkippable();
 
 	/**

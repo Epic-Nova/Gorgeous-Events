@@ -37,11 +37,17 @@ void UGorgeousEventAction::PostInitProperties()
 	});
 }
 
-UGorgeousEventAction::UGorgeousEventAction(): SkipType(EGorgeousEventSkipType_E::Event_Skip_Skippable), EventReference(nullptr), bIsRunning(false)
+UGorgeousEventAction::UGorgeousEventAction(): SkipType(EGorgeousEventSkipType_E::Event_Skip_Skippable), EventReference(nullptr), bIsRunning(true)
 {
 }
 
 UGorgeousEventAction::~UGorgeousEventAction() {}
+
+bool UGorgeousEventAction::IsEventActionSkippable_Implementation()
+{
+	//@TODO
+	return false;
+}
 
 void UGorgeousEventAction::CompleteAction() const
 {

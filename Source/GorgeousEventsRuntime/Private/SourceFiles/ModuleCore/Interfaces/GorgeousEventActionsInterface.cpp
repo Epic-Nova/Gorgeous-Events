@@ -36,6 +36,7 @@ bool UGorgeousEventActionsInterface::ExecuteAction(UGorgeousEvent* Event, FName 
 
 	const TObjectPtr<UGorgeousEventAction> Action = NewObject<UGorgeousEventAction>(Event, Event->Actions[ActionName], ActionName);
 	Action->ActionName = ActionName;
+	Action->EventReference = Event;
 	
 	Event->RegisteredEventActions.Add(Action);
 

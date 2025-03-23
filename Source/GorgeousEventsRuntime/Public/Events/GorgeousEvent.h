@@ -84,7 +84,7 @@ DECLARE_MULTICAST_DELEGATE(FGorgeousEventCleanup);
 <==========================================================================*/
 UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", EditInlineNew, Experimental, NotPlaceable, PerObjectConfig, Transient,
 	meta = (ToolTip = "The base class for all Gorgeous Events.", ShortTooltip = "Gorgeous Event", ExposedAsyncProxy = GorgeousEventAsyncAction))
-class UGorgeousEvent : public UGorgeousObjectVariable
+class GORGEOUSEVENTSRUNTIME_API UGorgeousEvent : public UGorgeousObjectVariable
 {
 	GENERATED_BODY()
 
@@ -92,6 +92,7 @@ class UGorgeousEvent : public UGorgeousObjectVariable
 	friend class UGorgeousEventManagingInterface;
 	friend class UGorgeousConstructionHandle;
 	friend class UGorgeousAssignmentMapper;
+	friend class UGorgeousEventWithSubEvents;
 	friend class UGorgeousEventActionsInterface;
 	friend class UGorgeousEventAction;
 	friend class AEventTrigger_A;
@@ -174,15 +175,6 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Classspace")
 	TArray<UGorgeousEvent*> GetClassspaceChildren() const;
-
-
-	/**
-	 * @brief Weather the execution of a specific sub event is finished or not
-	 * @param SubEvent The sub event to perform the check on
-	 * @return True if the execution is finished.
-	 */
-	UFUNCTION(BlueprintPure, Category = "Gorgeous Events|Sub Events")
-	bool IsSubEventFinished(const UGorgeousSubEvent* SubEvent);
 
 
 	/**

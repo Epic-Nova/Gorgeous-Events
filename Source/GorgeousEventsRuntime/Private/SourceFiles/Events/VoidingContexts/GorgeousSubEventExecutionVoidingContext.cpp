@@ -18,7 +18,7 @@ void UGorgeousSubEventExecutionVoidingContext::CheckVoidingNeed()
 	bool bAllSubEventsCompleted = false;
 	for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(VoidedEvent)->SubEvents)
 	{
-		if (VoidedEvent->IsSubEventFinished(SubEvent))
+		if (Cast<UGorgeousEventWithSubEvents>(VoidedEvent)->IsSubEventFinished(SubEvent))
 		{
 			bAllSubEventsCompleted = true;
 		}

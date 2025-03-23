@@ -36,4 +36,5 @@ public:
 private:
 
 	TObjectPtr<AEventTrigger_A> EventInstigator;
+	TObjectPtr<UGorgeousEvent> CallingEvent;
 };

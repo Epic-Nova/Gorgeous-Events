@@ -19,12 +19,17 @@ UObject* UGorgeousAssignmentMapper::SetObjectObjectSingleObjectVariable_Implemen
 	{
 		EventInstigator = Cast<AEventTrigger_A>(NewValue);
 	}
+	if (OptionalVariableName == TEXT("CallingEvent"))
+	{
+		CallingEvent = Cast<UGorgeousEvent>(NewValue);
+	}
 	return NewValue;
 }
 
 void UGorgeousAssignmentMapper::FlushAssignedVariables_Native(UGorgeousEvent* Event)
 {
 	Event->EventInstigator = EventInstigator;
+	Event->CallingEvent = CallingEvent;
 	FlushAssignedVariables(Event);
 	
 	Cast<UGorgeousConstructionHandle>(Event->GetOuter())->OnConstructionFinishedDelegate.Broadcast();

@@ -31,7 +31,9 @@
 
 //Event Includes
 #include "Events/GorgeousEvent.h"
-#include "Events/SubEvents/GorgeousSubEvent.h"
+#include "Events/GorgeousEventAction.h"
+#include "Events/GorgeousEventWithSubEvents.h"
+#include "Events/GorgeousSubEvent.h"
 #include "Events/AsyncActions/GorgeousEventAsyncAction.h"
 #include "Events/Triggers/EventTrigger_A.h"
 #include "Events/Triggers/EventOverlapTrigger_A.h"

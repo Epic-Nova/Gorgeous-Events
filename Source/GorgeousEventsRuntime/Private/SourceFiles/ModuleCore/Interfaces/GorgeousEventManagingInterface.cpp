@@ -88,6 +88,11 @@ bool UGorgeousEventManagingInterface::RegisterEvent_Internal(UGorgeousConstructi
 				}
 			}
 
+			if (!IncomingParent)
+			{
+				IncomingParent = ConstructionHandle->Parent;
+			}
+
 			if (!bIsExecutionAllowed)
 			{
 				UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The Execution of the Event is currently not allowed, this could be because another Event in the same Class-space is currently performing its execution.",
@@ -179,7 +184,7 @@ bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnr
 					bool bAllSubEventsCompleted = false;
 					for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->SubEvents)
 					{
-						if (EventToUnregister->IsSubEventFinished(SubEvent))
+						if (Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->IsSubEventFinished(SubEvent))
 						{
 							bAllSubEventsCompleted = true;
 						}
@@ -365,6 +370,9 @@ FTimerHandle UGorgeousEventManagingInterface::SetupProcessingLoopForEvent(UGorge
 	FTimerHandle EventProcessingLoopTimer;
 	GetWorld()->GetTimerManager().SetTimer(EventProcessingLoopTimer, [Event, this]
 	{
+		if (!GetWorld())
+			return;
+		
 		const float DeltaTime = GetWorld()->GetDeltaSeconds();
 		static int64 CurrentProcessingLoopCount = 0;
 		CurrentProcessingLoopCount++;

@@ -152,8 +152,12 @@ public:
 	TSubclassOf<UGorgeousAssignmentMapper> CorrespondingAssigmentMapper;
 
 	//The unique identifier associated with the constructing event
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = ( ExposeOnSpawn = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
 	FGuid UniqueEventIdentifier;
+
+	//The parent of the constructing event
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Gorgeous Events|Gorgeous Construction Handles", meta = (ExposeOnSpawn = true))
+	UGorgeousEvent* Parent;
 
 protected:
 

@@ -181,12 +181,6 @@ TArray<UGorgeousEvent*> UGorgeousEvent::GetClassspaceChildren() const
 	return Children;
 }
 
-bool UGorgeousEvent::IsSubEventFinished(const UGorgeousSubEvent* SubEvent)
-{
-	return SubEvent->bIsEventFinished;
-}
-
-
 void UGorgeousEvent::ContinuousEventProcessingLoop_Internal(const EGorgeousEventState_E CurrentLoopState, float DeltaTime,
                                                             int64 CurrentProcessingLoopCount)
 {

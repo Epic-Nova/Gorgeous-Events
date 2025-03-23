@@ -9,7 +9,6 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "GorgeousEvents_GIS.h"
-
 TObjectPtr<UGorgeousEvents_GIS> UGorgeousEvents_GIS::StaticEventsGISInstance = nullptr;
 
 void UGorgeousEvents_GIS::Initialize(FSubsystemCollectionBase& Collection)
@@ -82,6 +81,7 @@ TObjectPtr<UGorgeousEventInterface> UGorgeousEvents_GIS::GetRegisteredEventsInte
 			return Pair.Value;
 		}
 	}
+	
 	return nullptr;
 }
 
