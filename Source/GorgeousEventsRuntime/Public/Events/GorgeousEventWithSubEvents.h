@@ -10,6 +10,7 @@
 <==========================================================================*/
 #pragma once
 #include "GorgeousEvent.h"
+#include "GorgeousSubEvent.h"
 #include "GorgeousEventWIthSubEvents.generated.h"
 
 UCLASS(Abstract, Blueprintable, BlueprintType, Category = "Gorgeous Events", ClassGroup = "Gorgeous Events", Experimental, NotPlaceable,

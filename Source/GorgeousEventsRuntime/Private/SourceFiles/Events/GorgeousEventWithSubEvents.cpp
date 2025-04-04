@@ -9,7 +9,6 @@
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
 #include "GorgeousEventWithSubEvents.h"
-#include "GorgeousSubEvent.h"
 #include "ConstructionHandles/AssignmentMappers/GorgeousAssignmentMapper.h"
 #include "Interfaces/GorgeousEventConstructionInterface.h"
 #include "Interfaces/GorgeousEventManagingInterface.h"
