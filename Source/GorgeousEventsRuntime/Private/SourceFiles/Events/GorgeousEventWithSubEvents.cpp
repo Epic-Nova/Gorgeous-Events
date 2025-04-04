@@ -53,7 +53,7 @@ void UGorgeousEventWithSubEvents::OnEventConstructionQueued(UGorgeousConstructio
 	ConstructionHandle->Parent = this;
 	
 	UObject* InCallingEvent = this;
-	IGorgeousSingleObjectVariablesSetter_I::Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "CallingEvent", InCallingEvent);
+	Execute_SetObjectObjectSingleObjectVariable(ConstructionHandle->GetAssigmentMapper(), "CallingEvent", InCallingEvent);
 	AssignConstructionEventVariables(ConstructionHandle);
 	
 	UGorgeousEventManagingInterface* ManagingInterface = UGorgeousEventManagingInterface::GetEventManagingInterface();

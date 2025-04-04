@@ -159,70 +159,65 @@ void UGorgeousEventManagingInterface::ReregisterEvent(UGorgeousEvent* Event)
 
 bool UGorgeousEventManagingInterface::UnregisterEvent(UGorgeousEvent* EventToUnregister)
 {
-	if (IsEventRegistered(EventToUnregister))
+	if (!IsEventRegistered(EventToUnregister))
 	{
-		for (auto Pair : CurrentRegisteredEvents)
+		UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The requested event is not registered, aborting unregistration!","GT.Events.Managing.RegisterEvent.Not_Registered");
+		return false;
+	}
+	
+	GetWorld()->GetTimerManager().ClearTimer(CurrentRegisteredEvents[EventToUnregister]);
+
+	UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
+	bool bVoidedInstead = false;
+	
+	if (EventToUnregister->GetClassspaceChildren().Num() > 0)
+	{
+		VoidingInterface->VoidEvent(EventToUnregister, UGorgeousClassspaceExecutionVoidingContext::StaticClass());
+		bVoidedInstead = true;
+		
+		UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
+			"GT.Events.Managing.UnregisterEvent.Voided_Instead");
+	}
+
+	if (!VoidingInterface->IsEventVoided(EventToUnregister) && EventToUnregister->IsA<UGorgeousEventVoidingInterface>())
+	{
+		bool bAllSubEventsCompleted = false;
+		for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->SubEvents)
 		{
-			if (Pair.Key == EventToUnregister)
+			if (Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->IsSubEventFinished(SubEvent))
 			{
-				GetWorld()->GetTimerManager().ClearTimer(Pair.Value);
-
-				UGorgeousEventVoidingInterface* VoidingInterface = UGorgeousEventVoidingInterface::GetEventVoidingInterface();
-				bool bVoidedInstead = false;
-				
-				if (EventToUnregister->GetClassspaceChildren().Num() > 0)
-				{
-					VoidingInterface->VoidEvent(EventToUnregister, UGorgeousClassspaceExecutionVoidingContext::StaticClass());
-					bVoidedInstead = true;
-					
-					UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister is currently providing data to class-space children, therefore it cannot be unregistered. It got moved into the voiding system instead where it will idle until all children are finished with execution.",
-						"GT.Events.Managing.UnregisterEvent.Voided_Instead");
-				}
-
-				if (!VoidingInterface->IsEventVoided(EventToUnregister) && EventToUnregister->IsA<UGorgeousEventVoidingInterface>())
-				{
-					bool bAllSubEventsCompleted = false;
-					for (const auto SubEvent : Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->SubEvents)
-					{
-						if (Cast<UGorgeousEventWithSubEvents>(EventToUnregister)->IsSubEventFinished(SubEvent))
-						{
-							bAllSubEventsCompleted = true;
-						}
-						else
-						{
-							bAllSubEventsCompleted = false;
-							break;
-						}
-					}
-
-					if (!bAllSubEventsCompleted)
-					{
-						VoidingInterface->VoidEvent(EventToUnregister, UGorgeousSubEventExecutionVoidingContext::StaticClass());
-						bVoidedInstead = true;
-						
-						UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister has currently sub events performing their execution. It got moved into the voiding system instead where it will idle until all sub-events are finished with execution.",
-							"GT.Events.Managing.UnregisterEvent.Voided_Instead");
-					}
-				}
-				
-				if (bVoidedInstead)
-				{
-					const EGorgeousEventState_E PreviousEventState = EventToUnregister->EventState;
-					EventToUnregister->EventState = EGorgeousEventState_E::Event_State_Voided;
-					EventToUnregister->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToUnregister->EventState);
-					EventToUnregister->OnEventVoidedDelegate.Broadcast();
-
-					return true;
-				}
-				
-				UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(Pair.Key);
-				EventToUnregister->GetOuter()->MarkAsGarbage();
-				return RemoveUnregisteredEvent(EventToUnregister);
+				bAllSubEventsCompleted = true;
+			}
+			else
+			{
+				bAllSubEventsCompleted = false;
+				break;
 			}
 		}
+
+		if (!bAllSubEventsCompleted)
+		{
+			VoidingInterface->VoidEvent(EventToUnregister, UGorgeousSubEventExecutionVoidingContext::StaticClass());
+			bVoidedInstead = true;
+			
+			UGorgeousLoggingBlueprintFunctionLibrary::LogInformationMessage("The event you are trying to unregister has currently sub events performing their execution. It got moved into the voiding system instead where it will idle until all sub-events are finished with execution.",
+				"GT.Events.Managing.UnregisterEvent.Voided_Instead");
+		}
 	}
-	UGorgeousLoggingBlueprintFunctionLibrary::LogErrorMessage("The requested event is not registered, aborting unregistration!","GT.Events.Managing.RegisterEvent.Not_Registered");
-	return false;
+	
+	if (bVoidedInstead)
+	{
+		const EGorgeousEventState_E PreviousEventState = EventToUnregister->EventState;
+		EventToUnregister->EventState = EGorgeousEventState_E::Event_State_Voided;
+		EventToUnregister->OnEventStateChangeDelegate.Broadcast(PreviousEventState, EventToUnregister->EventState);
+		EventToUnregister->OnEventVoidedDelegate.Broadcast();
+
+		return true;
+	}
+	
+	UGorgeousRootObjectVariable::GetRootObjectVariable()->RemoveVariableFromRegistry(EventToUnregister);
+	EventToUnregister->GetOuter()->MarkAsGarbage();
+	return RemoveUnregisteredEvent(EventToUnregister);
 }
 
 bool UGorgeousEventManagingInterface::CancelEvent(UGorgeousEvent* EventToCancel)
@@ -279,6 +274,9 @@ bool UGorgeousEventManagingInterface::TriggerEvent_Internal(UGorgeousConstructio
 
 bool UGorgeousEventManagingInterface::CompleteEvent(UGorgeousEvent* EventToComplete)
 {
+
+	EventToComplete->OnEventVoidedDelegate.Broadcast();
+	
 	if (UnregisterEvent(EventToComplete))
 	{
 		EventToComplete->OnEventFinishedDelegate.Broadcast();
@@ -322,18 +320,29 @@ TArray<UGorgeousEvent*> UGorgeousEventManagingInterface::GetRegisteredEvents() c
 
 bool UGorgeousEventManagingInterface::IsEventRegistered(UGorgeousEvent* EventToCheck) const
 {
-	return CurrentRegisteredEvents.Contains(EventToCheck);
+	if (!EventToCheck)
+		return false;
+
+	for (const auto CurrentRegisteredEvent : CurrentRegisteredEvents)
+	{
+		if (CurrentRegisteredEvent.Key->UniqueIdentifier == EventToCheck->UniqueIdentifier)
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 void UGorgeousEventManagingInterface::LoadEventNative(TSoftClassPtr<UGorgeousEvent> EventToLoad,
 	const FOnEventLoadedNative& OnEventLoaded)
 {
-	UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Attempting to load event: %s"), *EventToLoad.ToString()), Logging_Information,
+	GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Attempting to load event: %s"), *EventToLoad.ToString()), Logging_Information,
         "GT.Events.Managing.LoadEvent.Attempt", 2.0f, true, true, false, this);
 	
     if (EventToLoad.IsValid())
     {
-        UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Starting async load for event: %s"), *EventToLoad.ToString()), Logging_Information,
+        GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Starting async load for event: %s"), *EventToLoad.ToString()), Logging_Information,
             "GT.Events.Managing.LoadEvent.Start_Async", 2.0f, true, true, false, this);
     	
         FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
@@ -367,21 +376,38 @@ void UGorgeousEventManagingInterface::LoadEventNative(TSoftClassPtr<UGorgeousEve
 
 FTimerHandle UGorgeousEventManagingInterface::SetupProcessingLoopForEvent(UGorgeousEvent* Event) const
 {
-	FTimerHandle EventProcessingLoopTimer;
-	GetWorld()->GetTimerManager().SetTimer(EventProcessingLoopTimer, [Event, this]
-	{
-		if (!GetWorld())
-			return;
-		
-		const float DeltaTime = GetWorld()->GetDeltaSeconds();
-		static int64 CurrentProcessingLoopCount = 0;
-		CurrentProcessingLoopCount++;
+    const UWorld* World = GetWorld();
+    if (!World)
+        return FTimerHandle();
 
-		if (Event)
-		{
-			Event->ContinuousProcessingLoopDelegate.Broadcast(Event->EventState, DeltaTime, CurrentProcessingLoopCount);
-		}
-	}, Event->CurrentProcessingLoopDelay, true);
+    if (!Event)
+         return FTimerHandle();
 
-	return EventProcessingLoopTimer;
+    FTimerHandle EventProcessingLoopTimer;
+	
+    TWeakObjectPtr WeakThis(this);
+    TWeakObjectPtr WeakEvent(Event);
+	
+    World->GetTimerManager().SetTimer(EventProcessingLoopTimer, [WeakEvent, WeakThis]
+    {
+		if (!WeakThis.IsValid() || !WeakEvent.IsValid())
+		  return;
+
+		const UGorgeousEventManagingInterface* StrongThis = WeakThis.Get();
+    	UGorgeousEvent* StrongEvent = WeakEvent.Get();
+
+		const UWorld* CurrentWorld = StrongThis->GetWorld();
+
+		// Still good practice to check the result, as an invalid pointer could happen in rare cases like world teardown
+		if (!CurrentWorld) 
+		   return;
+    	
+		const float DeltaTime = CurrentWorld->GetDeltaSeconds();
+    	StrongEvent->ProcessingLoopCount++;
+
+		StrongEvent->ContinuousProcessingLoopDelegate.Broadcast(StrongEvent->EventState, DeltaTime, StrongEvent->ProcessingLoopCount);
+
+    }, Event->CurrentProcessingLoopDelay, true);
+
+    return EventProcessingLoopTimer;
 }

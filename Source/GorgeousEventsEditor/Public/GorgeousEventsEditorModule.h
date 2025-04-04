@@ -8,17 +8,15 @@
 |                   Epic Nova is an independent entity,                     |
 |         that has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
-#pragma once
 
-#include "IGorgeousThingsModuleInterface.h"
+//<=============================--- Pragmas ---==============================>
+#pragma once
+//<-------------------------------------------------------------------------->
 
 /**
  * This module defines the editor module of the GorgeousEvents plugin.
  *
  * @author Nils Bergemann
- * @since Beginning
- * @version v0.1
- * @todo Finish the implementation of the event runtime module and the comments.
  */
  class FGorgeousEventsEditorModule final : public IGorgeousThingsModuleInterface
  {
@@ -33,5 +31,12 @@
 	 * The override function of the module interface that is called to unload this module.
 	 */
  	virtual void ShutdownModule() override;
- 	
+
+ 	/**
+	 * Returns an array of names from other gorgeous plugins that this plugin depends on.
+	 * This is used for the shop extension to download the full dependency chain of a gorgeous plugin.
+	 * 
+	 * @return All plugins that provide functionality that is used within this current module.
+	 */
+ 	virtual TArray<FName> GetDependentPlugins() override;
  };

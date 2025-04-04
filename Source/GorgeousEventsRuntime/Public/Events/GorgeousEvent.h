@@ -411,6 +411,7 @@ private:
 	//<============================--- Variables ---============================>
 public:
 	
+	
 protected:
 	
 private:
@@ -424,7 +425,9 @@ private:
 	//The current registered event actions that are instanced at the moment.
 	TArray<TObjectPtr<UGorgeousEventAction>> RegisteredEventActions;
 
-
+	//The current loop of the continuous processing loop
+	int32 ProcessingLoopCount;
+	
 	
 	//<------------------------------------------------------------------------->
 };

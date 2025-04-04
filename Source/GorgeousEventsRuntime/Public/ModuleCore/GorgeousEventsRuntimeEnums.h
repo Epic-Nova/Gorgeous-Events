@@ -15,7 +15,6 @@
 /**
  * @brief Enum that defines the state of the event that is being processed.
  * @author Nils Bergemann
- * @since Beginning
  */
 UENUM(BlueprintType, DisplayName = "Event State", meta = (ShortTooltip = "The state of the event that is being processed."))
 enum class EGorgeousEventState_E : uint8

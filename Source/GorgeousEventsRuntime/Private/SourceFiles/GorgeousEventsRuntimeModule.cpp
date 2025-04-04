@@ -14,7 +14,7 @@
 
 void FGorgeousEventsRuntimeModule::StartupModule()
 {
-	//@TODO: Use the Gorgeous Helper functions and do this in every gorgeous plugin; probably move this functionality to the interface defined in the utilities module of the core
+	//@TODO: Use the Gorgeous Helper functions and do this in every gorgeous plugin.
 	const TSharedPtr<IPlugin> ThisPlugin = IPluginManager::Get().FindPlugin(TEXT("GorgeousEvents"));
 	check(ThisPlugin.IsValid());
 
@@ -24,6 +24,11 @@ void FGorgeousEventsRuntimeModule::StartupModule()
 void FGorgeousEventsRuntimeModule::ShutdownModule()
 {
 	UE_LOG(LogTemp, Warning, TEXT("FGorgeousEventsRuntimeModule has shut down!"));
+}
+
+TArray<FName> FGorgeousEventsRuntimeModule::GetDependentPlugins()
+{
+	return TArray<FName>();
 }
 
 IMPLEMENT_MODULE(FGorgeousEventsRuntimeModule, GorgeousEventsRuntime)

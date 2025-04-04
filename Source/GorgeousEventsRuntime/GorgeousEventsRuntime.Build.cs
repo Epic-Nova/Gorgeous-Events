@@ -30,7 +30,7 @@ public class GorgeousEventsRuntime : ModuleRules
             Path.Combine(privateIncludePath, "HeaderFiles")
         });
         
-        PublicDependencyModuleNames.AddRange(new[] { "GorgeousCoreRuntime", "GorgeousCoreRuntimeUtilities", "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "Projects" });
+        PublicDependencyModuleNames.AddRange(new[] { "GorgeousCoreRuntime", "GorgeousCoreRuntimeUtilities", "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "Projects", "Kismet" });
         
         PrivateDependencyModuleNames.Add("GorgeousCoreRuntime");
     }

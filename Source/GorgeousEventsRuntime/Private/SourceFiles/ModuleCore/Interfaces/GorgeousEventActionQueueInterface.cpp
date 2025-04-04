@@ -6,23 +6,14 @@
 |              administrated by Epic Nova. All rights reserved.             |
 | ------------------------------------------------------------------------- |
 |                   Epic Nova is an independent entity,                     |
-|         that has nothing in common with Epic Games in any capacity.       |
+|      that is has nothing in common with Epic Games in any capacity.       |
 <==========================================================================*/
-#include "GorgeousEventsEditorModule.h"
+#include "Interfaces/GorgeousEventActionQueueInterface.h"
 
-void FGorgeousEventsEditorModule::StartupModule()
+void UGorgeousEventActionQueueInterface::MoveEventToActionQueue(UGorgeousEvent* EventToMove)
 {
-	UE_LOG(LogTemp, Warning, TEXT("FGorgeousEventsEditorModule has started!"));
 }
 
-void FGorgeousEventsEditorModule::ShutdownModule()
+void UGorgeousEventActionQueueInterface::TryResolveEventState(UGorgeousEvent* EventToResolve)
 {
-	UE_LOG(LogTemp, Warning, TEXT("FGorgeousEventsEditorModule has shut down!"));
 }
-
-TArray<FName> FGorgeousEventsEditorModule::GetDependentPlugins()
-{
-	return {"GorgeousCore"};
-}
-
-IMPLEMENT_MODULE(FGorgeousEventsEditorModule, GorgeousEventsEditor)

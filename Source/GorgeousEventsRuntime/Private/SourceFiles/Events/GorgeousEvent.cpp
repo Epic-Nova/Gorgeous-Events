@@ -138,15 +138,17 @@ void UGorgeousEvent::InvokeInstancedFunctionality(const FGuid NewUniqueIdentifie
 }
 
 UGorgeousEvent::UGorgeousEvent(): TriggerType(EGorgeousEventTriggerType_E::Event_Trigger_Manual),
-                                  EventState(EGorgeousEventState_E::Event_State_Invalid), bShouldSwitchToProcessing(true),
+                                  EventState(EGorgeousEventState_E::Event_State_Invalid),
+                                  bShouldSwitchToProcessing(true),
                                   ConstructionHandleClass(UGorgeousConstructionHandle::StaticClass()),
                                   CallingEvent(nullptr), bIsDebuggingMode(false), EventInstigator(nullptr),
-                                  GlobalLoggingKey(FGameplayTag::RequestGameplayTag("GT.Events.Global")),
                                   SecondsToWait(0.1), EventTimeout(120), CurrentProcessingLoopDelay(1),
                                   PreviousEventState(EGorgeousEventState_E::Event_State_Invalid), bIsUnique(false),
                                   AgainstCheck(StaticClass()),
-                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false), bIsEventFinished(false)
-{}
+                                  bPersist(false), bDestroyImmediately(false), bUniqueClassspaceExecution(false),
+                                  bIsEventFinished(false), ProcessingLoopCount(0)
+{
+}
 
 UGorgeousEvent::~UGorgeousEvent()
 {

@@ -163,7 +163,7 @@ TArray<UGorgeousConstructionHandle*> UGorgeousEventConstructionInterface::Valida
 	const bool bShouldRemoveInvalidHandles, const bool bApplyValidationToInstancedVariable, bool& bAllQueuedHandlesValid,
 	int32& NumInvalidEvents)
 {
-	UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Starting Construction Queue Validation with: \n bShouldRemoveInvalidHandles: %s \n bApplyValidationToInstancedVariable: %s"),
+	GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Starting Construction Queue Validation with: \n bShouldRemoveInvalidHandles: %s \n bApplyValidationToInstancedVariable: %s"),
 		bShouldRemoveInvalidHandles ? TEXT("True") : TEXT("False"), bApplyValidationToInstancedVariable ? TEXT("True") : TEXT("False")), Logging_Information,
 		"GT.Events.Construction.Queue.Validation.Start", 5.0f, true, true, false, this);
 
@@ -173,13 +173,13 @@ TArray<UGorgeousConstructionHandle*> UGorgeousEventConstructionInterface::Valida
 	{
 		if (IsValid(ConstructionHandle.Value))
 		{
-			UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Construction handle for event: %s is valid"),
+			GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Construction handle for event: %s is valid"),
 				*ConstructionHandle.Value->UniqueEventIdentifier.ToString()), Logging_Success,
 				"GT.Events.Construction.Queue.Validation.Valid", 2.0f, false, true, false, this);
 		}
 		else
 		{
-			UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Construction handle for event: %s is invalid"),
+			GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Construction handle for event: %s is invalid"),
 				*ConstructionHandle.Key.ToString()), Logging_Warning,
 				"GT.Events.Construction.Queue.Validation.Invalid", 2.0f, false, true, true, this);
 
@@ -189,7 +189,7 @@ TArray<UGorgeousConstructionHandle*> UGorgeousEventConstructionInterface::Valida
 			{
 				ConstructionHandle.Value->MarkAsGarbage();
 				TempConstructionQueue.Remove(ConstructionHandle.Key);
-				UGorgeousLoggingBlueprintFunctionLibrary::LogMessage(FString::Printf(TEXT("Removed construction handle for event: %s"),
+				GorgeousLogging::LogMessage_Internal(FString::Printf(TEXT("Removed construction handle for event: %s"),
 					*ConstructionHandle.Key.ToString()), Logging_Information,
 					"GT.Events.Construction.Queue.Validation.Removed", 2.0f, false, true, false, this);
 			}

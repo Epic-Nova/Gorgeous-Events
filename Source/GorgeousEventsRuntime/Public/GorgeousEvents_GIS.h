@@ -24,6 +24,7 @@
 #include "Interfaces/GorgeousEventManagingInterface.h"
 #include "Interfaces/GorgeousEventStatisticsInterface.h"
 #include "Interfaces/GorgeousEventVoidingInterface.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 //--------------=== Third Party & Miscellaneous Includes ===----------------->
 #include "GorgeousEvents_GIS.generated.h"
 //<-------------------------------------------------------------------------->
@@ -65,8 +66,6 @@ public:
 
 	//Override for when the subsystem is initialized.
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
-	static TObjectPtr<UGorgeousEvents_GIS> StaticEventsGISInstance;
 	
 protected:
 	
@@ -134,6 +133,9 @@ private:
 	
 	//<============================--- Variables ---============================>
 public:
+
+	//The static instance to this game instance subsystem.
+	static TObjectPtr<UGorgeousEvents_GIS> StaticEventsGISInstance;
 	
 protected:
 
